@@ -4,7 +4,8 @@ Requirements to run the server!
 
 ## 1.
 
-A Brain. 
+A Brain. [If you don't have one of these you shouldn't be here, 
+          Much less alive...]
 
 ## 2.
 
