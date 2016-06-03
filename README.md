@@ -13,7 +13,7 @@ Astron Build of Panda3D 1.8.1
 
 ## 3.
 
-PyAES [https://github.com/ricmoo/pyaes]
+BCrypt [https://github.com/pyca/bcrypt]
 
 ## 4. [Optional]
 
