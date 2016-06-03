@@ -72,14 +72,14 @@ class AccountManagerUD(DistributedObjectGlobalUD):
                                     callback=self._createdAccount)
 
     def _createdAccount(self, doId): # created account callback.
-        self._updateAccount(doId)
+        self._updateAccountOnCreation(doId)
 
-    def _updateAccount(self, doId):
+    def _updateAccountOnCreation(self, doId):
         with open(self.dbStorageFilename, 'r') as store:
             jdata = json.load(store)
             store.close()
             
-        jdata['Accounts'][str(self.token)] = str(doId)
+        jdata['Accounts'][self.token] = str(doId)
 
         with open(self.dbStorageFilename, 'r+') as store:
             store.write(json.dumps(jdata))
