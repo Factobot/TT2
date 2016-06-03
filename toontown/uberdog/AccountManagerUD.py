@@ -1,6 +1,6 @@
 from direct.distributed.DistributedObjectGlobalUD import DistributedObjectGlobalUD
 from time import gmtime, strftime
-import base64, os, json
+import base64, os, json, pyaes
 
 class AccountManagerUD(DistributedObjectGlobalUD):
     dbStorageFilename = 'db-storage.json'
@@ -10,6 +10,11 @@ class AccountManagerUD(DistributedObjectGlobalUD):
     }
 
     dbId = 4003 # look to the astron config.
+
+    # Encryption:
+    encryptionKey = 'TT2.0_DB_STORE_ENCRYPT__' # This will work for now.
+    iv = "InitializationVe__"
+    aes = pyaes.AESModeOfOperationCBC(encryptionKey, iv=iv)
 
     def __init__(self, air):
         DistributedObjectGlobalUD.__init__(self, air)
@@ -25,7 +30,10 @@ class AccountManagerUD(DistributedObjectGlobalUD):
         pass
 
     def encryptValue(self, value):
-        return base64.b64encode(str(value))
+        return self.aes.encrypt(value)
+
+    def decryptValue(self, value):
+        return self.aes.decrypt(value)
 
     def requestLogin(self, token, password):
         self.token = token
