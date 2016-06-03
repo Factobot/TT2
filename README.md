@@ -15,5 +15,9 @@ Astron Build of Panda3D 1.8.1
 
 PyAES [https://github.com/ricmoo/pyaes]
 
-## 4.
+## 4. [Optional]
+
+MySQL [https://github.com/mysql/mysql-connector-python]
+
+## 5.
 A Computer
