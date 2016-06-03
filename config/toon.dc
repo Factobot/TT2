@@ -4,6 +4,11 @@ from direct.distributed import DistributedNode/AI/UD
 from direct.distributed import DistributedSmoothNode/AI
 from direct.distributed import DistributedObjectGlobal/AI/UD
 from toontown.uberdog import AccountManager/UD
+from toontown.avatar import DistributedAvatar/AI
+from toontown.toon import DistributedToon/AI
+
+typedef uint8 bool;
+typedef uint32 DoId;
 
 struct BarrierData {
   uint16 context;
@@ -81,4 +86,11 @@ dclass AccountManager: DistributedObjectGlobal {
   string ACCOUNT_PASSWORD required db;
   string ACCOUNT_TIME_CREATED required db;
   string ACCOUNT_LAST_LOGIN required db;
+};
+
+dclass DistributedAvatar : DistributedObject {
+};
+
+dclass DistributedToon : DistributedAvatar, DistributedSmoothNode {
+    setDNAString(blob) required ownrecv broadcast db;
 };
