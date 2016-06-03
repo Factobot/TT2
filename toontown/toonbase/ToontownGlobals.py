@@ -66,6 +66,8 @@ headHeightDict = {'dls': 0.75,
  'ssl': 0.5,
  'sll': 0.75}
 
+ToonHidden = 0
+ToonRender = 1
 
 def getMickeyFont():
     return loader.loadFont("phase_3/models/fonts/MickeyFont.bam")

@@ -92,5 +92,5 @@ dclass DistributedAvatar : DistributedObject {
 };
 
 dclass DistributedToon : DistributedAvatar, DistributedSmoothNode {
-    setDNAString(blob) required ownrecv broadcast db;
+  setDNAString(blob) required broadcast ram db;
 };
