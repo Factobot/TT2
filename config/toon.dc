@@ -4,8 +4,8 @@ from direct.distributed import DistributedNode/AI/UD
 from direct.distributed import DistributedSmoothNode/AI
 from direct.distributed import DistributedObjectGlobal/AI/UD
 from toontown.uberdog import AccountManager/UD
-from toontown.avatar import DistributedAvatar/AI
-from toontown.toon import DistributedToon/AI
+//from toontown.avatar import DistributedAvatar/AI
+//from toontown.toon import DistributedToon/AI
 
 typedef uint8 bool;
 typedef uint32 DoId;

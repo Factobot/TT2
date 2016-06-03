@@ -1,4 +1,6 @@
 from direct.distributed.DistributedObjectGlobalUD import DistributedObjectGlobalUD
+from direct.distributed.PyDatagram import PyDatagram
+from direct.distributed.MsgTypes import *
 from time import gmtime, strftime
 import base64, os, json, pyaes
 
@@ -73,6 +75,7 @@ class AccountManagerUD(DistributedObjectGlobalUD):
 
     def _createdAccount(self, doId): # created account callback.
         self._updateAccountOnCreation(doId)
+        self._activateSender(doId)
 
     def _updateAccountOnCreation(self, doId):
         with open(self.dbStorageFilename, 'r') as store:
@@ -83,3 +86,18 @@ class AccountManagerUD(DistributedObjectGlobalUD):
 
         with open(self.dbStorageFilename, 'r+') as store:
             store.write(json.dumps(jdata))
+
+    def _activateSender(self, doId):
+        sender = self.air.getMsgSender()
+
+        datagram = PyDatagram()
+        datagram.addServerHeader(sender, self.air.ourChannel, CLIENTAGENT_OPEN_CHANNEL)
+        datagram.addUint64(doId)
+        self.air.send(datagram)
+        datagram.clear() # Cleanse data
+
+        datagram = PyDatagram()
+        datagram.addServerHeader(sender, self.air.ourChannel, CLIENTAGENT_SET_CLIENT_ID)
+        datagram.addUint64(doId)
+        self.air.send(datagram)
+        datagram.clear() # Cleanse data
