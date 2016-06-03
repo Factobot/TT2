@@ -3,6 +3,7 @@ from panda3d.core import *
 from direct.interval.IntervalGlobal import *
 
 class Intro:
+
     def __init__(self):
         self.curtain = OnscreenImage(
             image = "stage_3/maps/t2_gui_curtain.jpg",
@@ -13,8 +14,12 @@ class Intro:
         
         self.introIval = Sequence(
             Wait(2.5),
-            self.curtain.posInterval(1, (0,0,2))
+            self.curtain.posInterval(1, (0,0,2)),
+            Func(self.allowButtonClick)
         )
+
+    def allowButtonClick(self):
+        base.loadingScreen.canClick = True
         
     def enter(self):
         self.curtain.show()

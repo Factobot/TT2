@@ -1,13 +1,14 @@
 from direct.gui.DirectGui import *
 from direct.interval.IntervalGlobal import *
 from panda3d.core import *
-
+from pandac.PandaModules import *
 from toontown.toongui.Intro import *
 from toontown.toonbase import TTLocalizer, ToontownGlobals
 
 class LoadingScreen(Intro):
 
     def __init__(self):
+        self.canClick = False
         self.background = OnscreenImage( 
             image = loader.loadTexture("stage_3/maps/t2_gui_loadingBg.jpg"),
             scale = Vec3(1,1,1)
@@ -45,6 +46,7 @@ class LoadingScreen(Intro):
             self.logo.scaleInterval(0.7, Vec3(1.34,1.04,0.54)),
             self.logo.scaleInterval(0.7, Vec3(1.3,1,0.5))
         )
+
         Intro.__init__(self)
         
     def enablePlay(self, avList):
@@ -53,6 +55,9 @@ class LoadingScreen(Intro):
         self.logo.bind(DGG.B1CLICK, self.__handleLogoClick, [avList])
         
     def __handleLogoClick(self, avList, e):
+        if self.canClick == False:
+            return
+
         base.cr.removeLoadingScreen()
         base.cr._handleLoginDone(avList)
         
