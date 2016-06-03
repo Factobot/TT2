@@ -76,6 +76,7 @@ class ToontownClientRepository(ClientRepositoryBase, FSM):
         self.notify.warning('Failed to connect to the gameserver!')
     
     def enterLogin(self):
+        self.accept('loginDone', self._handleLoginResp)
         self.accountManager.requestLogin(self.getPlayToken(), self.getPassword())
     
     def exitLogin(self):

@@ -14,4 +14,4 @@ class AccountManager(DistributedObjectGlobal):
         avList = [ ]
         # TODO: unpack recieved values, then pack them by slotId.
 
-        self.cr._handleLoginResp(avList)
+        messenger.send('loginDone', [avList])
