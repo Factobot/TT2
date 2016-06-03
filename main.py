@@ -1,0 +1,1 @@
+import toontown.toonbase.Toontown2Start
