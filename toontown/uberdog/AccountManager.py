@@ -5,13 +5,8 @@ class AccountManager(DistributedObjectGlobal):
     def __init__(self, cr):
         DistributedObjectGlobal.__init__(self, cr)
     
-    def requestLogin(self, token):
-        self.token = token
-
-        if len(self.token) == 0:
-            self.token = 'developer'
-        
-        self.sendUpdate('requestLogin', [token])
+    def requestLogin(self, token, password):
+        self.sendUpdate('requestLogin', [token, password])
         # TEMPORARY: THIS ISN'T SUPPOSE TO BE HERE AT ALL!
         self.recieveAvatar()
 

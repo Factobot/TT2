@@ -34,17 +34,20 @@ class ToontownClientRepository(ClientRepositoryBase, FSM):
 
     DO_ID_ACCOUNT_MANAGER = 1000
 
-    def __init__(self, dcFileNames, serverVersion, serverList, playToken):
+    def __init__(self, dcFileNames, serverVersion, serverList, accountDetails):
         ClientRepositoryBase.__init__(self, dcFileNames)
         FSM.__init__(self, 'TCR')
         
         self.serverVersion = serverVersion
         self.serverList = serverList
-        self.playToken = playToken
+        self.accountDetails = accountDetails
         self.accountManager = self.generateGlobalObject(self.DO_ID_ACCOUNT_MANAGER, 'AccountManager')
 
     def getPlayToken(self):
-        return str(self.playToken)
+        return str(self.accountDetails[0])
+
+    def getPassword(self):
+        return str(self.accountDetails[1])
     
     def _connect(self):
         self.request('Connect')
@@ -73,7 +76,7 @@ class ToontownClientRepository(ClientRepositoryBase, FSM):
         self.notify.warning('Failed to connect to the gameserver!')
     
     def enterLogin(self):
-        self.accountManager.requestLogin(self.getPlayToken())
+        self.accountManager.requestLogin(self.getPlayToken(), self.getPassword())
     
     def exitLogin(self):
         pass

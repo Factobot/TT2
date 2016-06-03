@@ -29,8 +29,8 @@ else:
 __builtin__.base.cr = ToontownClientRepository(
     dcFileNames=['config/toon.dc'], 
     serverVersion=serverVersion, 
-    serverList=[gameserver, 7198], # Port stays default.
-    playToken=config.GetString('play-token')
+    serverList=[config.GetString('game-server', '127.0.0.1'), 7198], # Port stays default.
+    accountDetails=[os.environ['ACCOUNT_PLAYTOKEN'], os.environ['ACCOUNT_PASSWORD']]
 )
 
 base.cr._connect()
