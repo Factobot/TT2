@@ -1,4 +1,4 @@
-import cPickle, base64, hashlib, zlib
+import cPickle, base64, hashlib, zlib, os
 
 DEFAULT_SETTINGS = {
     'display': 'pandagl'
@@ -21,6 +21,9 @@ class ToonSettings:
             settingsFile.close()
     
     def read(self):
+        if not os.path.exists('settings.stg'):
+            self.save()
+
         with open('settings.stg', 'rb') as settingsFile:
             contents = settingsFile.read()
             contents = contents.replace(self.hashSecret, '')
