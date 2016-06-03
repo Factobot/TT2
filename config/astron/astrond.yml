@@ -11,7 +11,7 @@ messagedirector:
 
 uberdogs:
     - class: AccountManager
-      id: 1000
+      id: 1001
       anonymous: true
 
 roles:
