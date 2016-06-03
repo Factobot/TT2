@@ -13,8 +13,7 @@ class AccountManagerUD(DistributedObjectGlobalUD):
 
     # Encryption:
     encryptionKey = 'TT2.0_DB_STORE_ENCRYPT__' # This will work for now.
-    iv = "Initialization__"
-    aes = pyaes.AESModeOfOperationCBC(encryptionKey, iv=iv)
+    aes = pyaes.AESModeOfOperationCTR(encryptionKey)
 
     def __init__(self, air):
         DistributedObjectGlobalUD.__init__(self, air)
