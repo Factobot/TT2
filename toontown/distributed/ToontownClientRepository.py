@@ -32,7 +32,8 @@ class ToontownClientRepository(ClientRepositoryBase, FSM):
         ]
     }
 
-    DO_ID_ACCOUNT_MANAGER = 1000
+    GameGlobalsId = 1000
+    DO_ID_ACCOUNT_MANAGER = 1001
 
     def __init__(self, dcFileNames, serverVersion, serverList, accountDetails):
         ClientRepositoryBase.__init__(self, dcFileNames)

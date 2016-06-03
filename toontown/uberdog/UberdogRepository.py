@@ -2,7 +2,7 @@ from direct.distributed.AstronInternalRepository import AstronInternalRepository
 from direct.distributed.PyDatagram import *
 
 class UberdogRepository(AstronInternalRepository):
-    DO_ID_ACCOUNT_MANAGER = 1000
+    DO_ID_ACCOUNT_MANAGER = 1001
 
     def __init__(self, dcFileNames, baseChannel, serverId):
         AstronInternalRepository.__init__(self, baseChannel, serverId, dcFileNames, dcSuffix='UD')
