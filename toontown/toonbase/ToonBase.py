@@ -22,6 +22,11 @@ class ToonBase(ShowBase, AudioManager):
         
         if config.GetBool('want-disable-mouse', False):
             self.disableMouse()
+
+        self.accept('f2', self.getDoIdList)
+
+    def getDoIdList(self):
+        print (base.cr.doId2do)
     
     def createToonBase(self):
         self.loadingScreen = LoadingScreen()
