@@ -69,5 +69,5 @@ class ToonPicker:
             pick.destroy()
         
     def requestCreateAvatar(self, pick):
-        messenger.send(self.doneEvent, [pick.av, pick.slot, "create"])
+        messenger.send(self.doneEvent, [None, pick.slot, "create"])
         
