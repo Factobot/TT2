@@ -9,7 +9,6 @@ class AccountManager(DistributedObjectGlobal):
         self.sendUpdate('requestLogin', [token, password])
 
     def recieveAvatar(self, avatar):
-        print 'recieveAvatar'
         avList = [ ]
 
         if len(avatar) > 0:

@@ -115,7 +115,7 @@ class AccountManagerUD(DistributedObjectGlobalUD):
                 store.close()
 
         self.air.dbInterface.queryObject(self.dbId,
-                            doId=data['Accounts'][self.token],
+                            doId=jdata['Accounts'][self.token],
                             callback=self._checkForAvatars)
 
     def _checkForAvatars(self, doId, fields):
