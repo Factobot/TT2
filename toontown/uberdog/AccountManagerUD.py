@@ -50,7 +50,7 @@ class AccountManagerUD(DistributedObjectGlobalUD):
         (ret, data) = self.checkIfStored(self.token)
 
         if ret == 'success':
-            pass
+            self.updateStoredAccount(self.token)
         else:
             self.createNewAccount(self.token, password)
 
@@ -63,7 +63,7 @@ class AccountManagerUD(DistributedObjectGlobalUD):
         if token in accounts:
             return ('success', accounts[token])
 
-        return ('failure', [])
+        return ('failure', None)
 
     def createNewAccount(self, token, password):
         fields = {
@@ -92,9 +92,34 @@ class AccountManagerUD(DistributedObjectGlobalUD):
         with open(self.dbStorageFilename, 'r+') as store:
             store.write(json.dumps(jdata))
 
-    def _activateSender(self, doId):
+    def updateStoredAccount(self, token):
+        with open(self.dbStorageFilename, 'r') as store:
+            jdata = json.load(store)
+            store.close()
+
+        fields = {
+            'ACCOUNT_LAST_LOGIN': strftime("%Y-%m-%d %H:%M:%S", gmtime())
+        }
+
+        self.air.dbInterface.updateObject(self.dbId,
+                                        doId=jdata['Accounts'][token],
+                                        dclass=self.air.dclassesByName['AccountManagerUD'],
+                                        newFields=fields,
+                                        callback=self._updatedStoredAccount)
+
+    def _updatedStoredAccount(self, doId):
+        if doId == None:
+            if self.token in self.playToken2connection:
+                doId = self.playToken2connection[self.token]
+            else:
+                return
+        
+        # TODO: get avatars and send here.
+        self._activateSender(doId)
+
+    def _activateSender(self, channel, avatar=None):
         target = self.playToken2connection[self.token]
-        self.accountId2connection[doId] = target
+        self.accountId2connection[channel] = target
 
         datagram = PyDatagram()
         datagram.addServerHeader(target, self.air.ourChannel, CLIENTAGENT_SET_STATE)
@@ -104,13 +129,13 @@ class AccountManagerUD(DistributedObjectGlobalUD):
 
         datagram = PyDatagram()
         datagram.addServerHeader(target, self.air.ourChannel, CLIENTAGENT_OPEN_CHANNEL)
-        datagram.addUint64(doId) # TODO!
+        datagram.addUint64(channel) # TODO!
         self.air.send(datagram)
         datagram.clear() # Cleanse data
 
         datagram = PyDatagram()
         datagram.addServerHeader(target, self.air.ourChannel, CLIENTAGENT_SET_CLIENT_ID)
-        datagram.addUint64(doId << 32) # TODO!
+        datagram.addUint64(channel << 32) # TODO!
         self.air.send(datagram)
         datagram.clear() # Cleanse data
 
@@ -121,4 +146,5 @@ class AccountManagerUD(DistributedObjectGlobalUD):
         datagram.clear() # Cleanse data
 
         # We're done here send a response.
-        self.sendUpdateToChannel(target, 'recieveAvatar', [])
+        if avatar == None:
+            self.sendUpdateToChannel(target, 'recieveAvatar', [])
