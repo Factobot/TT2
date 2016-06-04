@@ -78,10 +78,17 @@ dclass DistributedObjectGlobal: DistributedObject {
   
 }
 
+struct ToonObject {
+  string dnaString;
+  string name;
+  uint8 posIndex;
+};
+
 dclass AccountManager: DistributedObjectGlobal {
   requestLogin(string token, string password) clsend;
-  recieveAvatar();
+  recieveAvatar(ToonObject[]);
 
+  uint32[] ACCOUNT_AVATARS required db;
   string ACCOUNT_USERNAME required db;
   string ACCOUNT_PASSWORD required db;
   string ACCOUNT_TIME_CREATED required db;

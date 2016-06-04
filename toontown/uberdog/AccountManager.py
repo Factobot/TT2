@@ -8,8 +8,11 @@ class AccountManager(DistributedObjectGlobal):
     def requestLogin(self, token, password):
         self.sendUpdate('requestLogin', [token, password])
 
-    def recieveAvatar(self): # TODO: avatar
+    def recieveAvatar(self, avatar):
+        print 'recieveAvatar'
         avList = [ ]
-        # TODO: unpack recieved values, then pack them by slotId.
+
+        if len(avatar) > 0:
+            avList.append(avatar)
 
         messenger.send('loginDone', [avList])

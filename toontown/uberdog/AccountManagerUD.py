@@ -67,6 +67,7 @@ class AccountManagerUD(DistributedObjectGlobalUD):
 
     def createNewAccount(self, token, password):
         fields = {
+            'ACCOUNT_AVATARS': [],
             'ACCOUNT_USERNAME': self.encryptValue(token),
             'ACCOUNT_PASSWORD': self.encryptValue(password),
             'ACCOUNT_TIME_CREATED': strftime("%Y-%m-%d %H:%M:%S", gmtime()),
@@ -80,7 +81,7 @@ class AccountManagerUD(DistributedObjectGlobalUD):
 
     def _createdAccount(self, doId): # created account callback.
         self._updateAccountOnCreation(doId)
-        self._activateSender(doId)
+        self._activateSender(doId, avatar=[])
 
     def _updateAccountOnCreation(self, doId):
         with open(self.dbStorageFilename, 'r') as store:
@@ -109,15 +110,26 @@ class AccountManagerUD(DistributedObjectGlobalUD):
 
     def _updatedStoredAccount(self, doId):
         if doId == None:
-            if self.token in self.playToken2connection:
-                doId = self.playToken2connection[self.token]
-            else:
-                return
-        
-        # TODO: get avatars and send here.
-        self._activateSender(doId)
+            with open(self.dbStorageFilename, 'r') as store:
+                jdata = json.load(store)
+                store.close()
 
-    def _activateSender(self, channel, avatar=None):
+        self.air.dbInterface.queryObject(self.dbId,
+                            doId=data['Accounts'][self.token],
+                            callback=self._checkForAvatars)
+
+    def _checkForAvatars(self, doId, fields):
+        avatarList = fields['ACCOUNT_AVATARS']
+
+        if len(avatarList) > 0:
+            for av in avatarList:
+                self._activateSender(self.playToken2connection[self.token], avatar=av) # TODO!
+        else:
+            self._activateSender(self.playToken2connection[self.token], avatar=[])
+
+        return None
+
+    def _activateSender(self, channel, avatar):
         target = self.playToken2connection[self.token]
         self.accountId2connection[channel] = target
 
@@ -146,5 +158,4 @@ class AccountManagerUD(DistributedObjectGlobalUD):
         datagram.clear() # Cleanse data
 
         # We're done here send a response.
-        if avatar == None:
-            self.sendUpdateToChannel(target, 'recieveAvatar', [])
+        self.sendUpdateToChannel(target, 'recieveAvatar', [avatar])
