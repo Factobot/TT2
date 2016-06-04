@@ -7,8 +7,6 @@ class AccountManager(DistributedObjectGlobal):
     
     def requestLogin(self, token, password):
         self.sendUpdate('requestLogin', [token, password])
-        # TEMPORARY: THIS ISN'T SUPPOSE TO BE HERE AT ALL!
-        #self.recieveAvatar()
 
     def recieveAvatar(self): # TODO: avatar
         avList = [ ]
