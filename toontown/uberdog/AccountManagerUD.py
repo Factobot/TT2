@@ -19,6 +19,8 @@ class AccountManagerUD(DistributedObjectGlobalUD):
 
     def __init__(self, air):
         DistributedObjectGlobalUD.__init__(self, air)
+        self.playToken2connection = { }
+        self.accountId2connection = { }
         self.createStore()
 
     def createStore(self):
@@ -38,6 +40,9 @@ class AccountManagerUD(DistributedObjectGlobalUD):
 
     def requestLogin(self, token, password):
         self.token = token
+
+        sender = self.air.getMsgSender()
+        self.playToken2connection[token] = sender
 
         if len(self.token) == 0:
             return
@@ -88,16 +93,32 @@ class AccountManagerUD(DistributedObjectGlobalUD):
             store.write(json.dumps(jdata))
 
     def _activateSender(self, doId):
-        sender = self.air.getMsgSender()
+        target = self.playToken2connection[self.token]
+        self.accountId2connection[doId] = target
 
         datagram = PyDatagram()
-        datagram.addServerHeader(sender, self.air.ourChannel, CLIENTAGENT_OPEN_CHANNEL)
-        datagram.addUint64(doId)
+        datagram.addServerHeader(target, self.air.ourChannel, CLIENTAGENT_SET_STATE)
+        datagram.addUint16(1) # ANONYMOUS
         self.air.send(datagram)
         datagram.clear() # Cleanse data
 
         datagram = PyDatagram()
-        datagram.addServerHeader(sender, self.air.ourChannel, CLIENTAGENT_SET_CLIENT_ID)
-        datagram.addUint64(doId)
+        datagram.addServerHeader(target, self.air.ourChannel, CLIENTAGENT_OPEN_CHANNEL)
+        datagram.addUint64(doId) # TODO!
         self.air.send(datagram)
         datagram.clear() # Cleanse data
+
+        datagram = PyDatagram()
+        datagram.addServerHeader(target, self.air.ourChannel, CLIENTAGENT_SET_CLIENT_ID)
+        datagram.addUint64(doId << 32) # TODO!
+        self.air.send(datagram)
+        datagram.clear() # Cleanse data
+
+        datagram = PyDatagram()
+        datagram.addServerHeader(target, self.air.ourChannel, CLIENTAGENT_SET_STATE)
+        datagram.addUint16(2) # ESTABLISHED
+        self.air.send(datagram)
+        datagram.clear() # Cleanse data
+
+        # We're done here send a response.
+        self.sendUpdateToChannel(target, 'recieveAvatar', [])
