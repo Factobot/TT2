@@ -20,3 +20,6 @@ class AudioManager:
     def stopMusic(self):
         if self.currentPlaying != None and self.isPlaying == True:
             self.currentPlaying.stop()
+
+        self.currentPlaying = None
+        self.isPlaying = False

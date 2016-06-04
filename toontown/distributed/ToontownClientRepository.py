@@ -6,6 +6,7 @@ from direct.distributed.PyDatagram import PyDatagram
 from direct.distributed.MsgTypes import *
 from direct.interval.IntervalGlobal import *
 from toontown.login.ToonPicker import ToonPicker
+from toontown.makeatoon.MakeAToon import MakeAToon
 
 class ToontownClientRepository(ClientRepositoryBase, FSM):
     notify = directNotify.newCategory("ToontownClientRepository")
@@ -28,7 +29,10 @@ class ToontownClientRepository(ClientRepositoryBase, FSM):
             'enterLoginDone'
         ],
         'enterLoginDone': [
-            'exitLoginDone'
+            'exitLoginDone',
+            'enterCreateToon'
+        ],
+        'enterCreateToon': [
         ]
     }
 
@@ -87,7 +91,7 @@ class ToontownClientRepository(ClientRepositoryBase, FSM):
         base.loadingScreen.exit()
 
     def _handleLoginResp(self, avList):
-        self.tookPicker = ToonPicker(avList, "ToonPickerDone")
+        self.tookPicker = ToonPicker(avList, 'ToonPickerDone')
         base.loadingScreen.enablePlay(avList)
         #self.loadingWait = Sequence(
         #    Wait(17.5),
@@ -111,7 +115,11 @@ class ToontownClientRepository(ClientRepositoryBase, FSM):
         pass
         
     def enterCreateToon(self, slot):
-        pass
+        if self.tookPicker:
+            self.tookPicker.exit()
+
+        self.makeAToon = MakeAToon('CreatedAvatar')
+        self.makeAToon.enter()
         
     def exitCreateToon(self):
         pass

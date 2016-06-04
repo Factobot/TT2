@@ -9,7 +9,7 @@ class ToonBase(ShowBase, AudioManager):
     
     def __init__(self, *args, **kwArgs):
         ShowBase.__init__(self, args, kwArgs)
-        AudioManager.__init__(self)
+        self.audioManager = AudioManager()
 
         self.loader = ToontownLoader(self)
         self.accept('f1', self.takeScreenShot)
@@ -32,10 +32,10 @@ class ToonBase(ShowBase, AudioManager):
         self.loadingScreen = LoadingScreen()
         self.loadingScreen.enter()
 
-        self.loadMusic('stage_3/audio/bgm/TT_Theme.mp3', True, volume=0.6)
+        self.playMusic('stage_3/audio/bgm/TT_Theme.mp3', True, volume=0.6)
 
-    def loadMusic(self, musicFile, wantLoop, volume=0):
-        AudioManager.playMusic(self, musicFile, wantLoop, volume)
+    def playMusic(self, musicFile, wantLoop, volume=0):
+        self.audioManager.playMusic(musicFile, wantLoop, volume)
     
     def takeScreenShot(self):
         self.prefix = config.GetString('screenshot-prefix', 'toontown')

@@ -63,8 +63,12 @@ class ToonPick:
         
     def __hover(self, e):
         self.bubble["text_fg"] = Vec4(0,0.9,1,1)
-        self.bubble.setScale(0.22)
+
+        if not self.bubble.isEmpty():
+            self.bubble.setScale(0.22)
         
     def __out(self, e):
         self.bubble["text_fg"] = Vec4(0,0.5,1,1)
-        self.bubble.setScale(0.2)
+
+        if not self.bubble.isEmpty():
+            self.bubble.setScale(0.2)
