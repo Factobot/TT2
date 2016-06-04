@@ -46,6 +46,7 @@ class ToonPicker:
         
         for av in avList:
             self.picks[av.slot].setToon(av)
+        
         for pick in self.picks:
             if pick.mode == MODE_NONE:
                 pick.setCreate()

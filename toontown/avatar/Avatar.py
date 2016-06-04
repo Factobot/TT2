@@ -1,5 +1,6 @@
 
 class Avatar:
+    
     def __init__(self):
         self.style = None
         self.avatarScale = 0
