@@ -81,17 +81,17 @@ class PlayAssistant(FSM):
             if self.physControls.isAirborne:
                 pass #todo: find this animation
             else:
-                self.toon.b_setAnimState(self.toon, "run")
+                self.toon.b_setAnimState("run")
             return task.cont
         elif self.keyData["a"] or self.keyData["d"] or self.keyData["s"]:
             if self.physControls.isAirborne:
-                self.toon.b_setAnimState(self.toon, "jumpAirborne")
+                self.toon.b_setAnimState("jumpAirborne")
             else:
-                self.toon.b_setAnimState(self.toon, "walk")
+                self.toon.b_setAnimState("walk")
         elif self.physControls.isAirborne:
-            self.toon.b_setAnimState(self.toon, "jumpAirborne")
+            self.toon.b_setAnimState("jumpAirborne")
         else:
-            self.toon.b_setAnimState(self.toon, "neutral")
+            self.toon.b_setAnimState("neutral")
         
         return task.cont
         
