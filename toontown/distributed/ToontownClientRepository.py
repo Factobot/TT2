@@ -100,7 +100,7 @@ class ToontownClientRepository(ClientRepositoryBase, FSM):
         self.accept('shardInterestComplete', self._handleShardGenerated, [avList])
         self.shardHandle = self.addInterest(self.GameGlobalsId, 2, 'shardHandle')
 
-    def _handleShardGenerated(self, shardDoId, shardName, shardType, shardStatus, avList):
+    def _handleShardGenerated(self, avList, shardDoId, shardName, shardType, shardStatus):
         if shardDoId in self.listShardMap.keys():
             del self.listShardMap[shardDoId]
 
