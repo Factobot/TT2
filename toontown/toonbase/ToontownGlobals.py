@@ -1,5 +1,30 @@
 from panda3d.core import *
 
+# Toon control options
+ToonSpeedFactor = 1.25
+ToonForwardSpeed = 16.0 * ToonSpeedFactor
+ToonJumpForce = 24.0
+ToonReverseSpeed = 8.0 * ToonSpeedFactor
+ToonRotateSpeed = 80.0 * ToonSpeedFactor
+ToonForwardSlowSpeed = 6.0
+ToonJumpSlowForce = 4.0
+ToonReverseSlowSpeed = 2.5
+ToonRotateSlowSpeed = 33.0
+
+FloorOffset = 0.025
+WallBitmask = BitMask32(1)
+FloorBitmask = BitMask32(2)
+CameraBitmask = BitMask32(4)
+CameraTransparentBitmask = BitMask32(8)
+SafetyNetBitmask = BitMask32(512)
+SafetyGateBitmask = BitMask32(1024)
+GhostBitmask = BitMask32(2048)
+PathFindingBitmask = BitMask32.bit(29)
+OriginalCameraFov = 52.0
+DefaultCameraFov = 52.0
+DefaultCameraFar = 400.0
+DefaultCameraNear = 1.0
+
 toonBodyScales = {'mouse': 0.6,
  'cat': 0.73,
  'duck': 0.66,
