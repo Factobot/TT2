@@ -47,6 +47,7 @@ class ToontownClientRepository(ClientRepositoryBase, FSM):
         self.serverList = serverList
         self.accountDetails = accountDetails
         self.accountManager = self.generateGlobalObject(self.DO_ID_ACCOUNT_MANAGER, 'AccountManager')
+        self.listShardMap = []
 
     def getPlayToken(self):
         return str(self.accountDetails[0])
@@ -93,7 +94,24 @@ class ToontownClientRepository(ClientRepositoryBase, FSM):
     def _handleLoginResp(self, avList):
         self.uberdogHandle = self.addInterest(self.GameGlobalsId, 0, 'uberdogHandle', 'uberdogHandleDone')
         # TODO: Check for an AI shard object!
-        self.acceptOnce('uberdogHandleDone', self._enterPickAToon, [avList])
+        self.acceptOnce('uberdogHandleDone', self._handleUberdogResp, [avList])
+
+    def _handleUberdogResp(self, avList):
+        self.shardHandle = self.addInterest(self.GameGlobalsId, 2, 'shardHandle', 'shardHandleDone')
+        # TODO: Check for an AI shard object!
+        self.accept('shardHandleDone', self._handleShardResp, [avList])
+
+    def _handleShardResp(self, avList):
+        self.accept('shardInterestComplete', self._handleShardGenerated, [avList])
+
+    def _handleShardGenerated(self, shardDoId, shardName, shardStatus, avList):
+        if shardDoId in self.listShardMap:
+            del self.listShardMap[shardDoId]
+
+        self.listShardMap[shardDoId] = [shardName, shardStatus]
+
+        if shardStatus:
+            self._enterPickAToon(avList)
 
     def _enterPickAToon(self, avList):
         self.tookPicker = ToonPicker(avList, 'ToonPickerDone')
@@ -160,10 +178,7 @@ class ToontownClientRepository(ClientRepositoryBase, FSM):
         zoneId = di.getUint32()
         classId = di.getUint16()
 
-        dclass = self.dclassesByNumber[classId]
-        if self._isInvalidPlayerAvatarGenerate(doId, dclass, parentId, zoneId):
-            return None
-        
+        dclass = self.dclassesByNumber[classId]  
         dclass.startGenerate()
         distObj = self.generateWithRequiredFields(dclass, doId, di, parentId, zoneId)
         dclass.stopGenerate()

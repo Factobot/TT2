@@ -3,6 +3,7 @@ import DistrictGlobals
 
 class DistributedDistrict(DistributedObject):
     neverDisable = 1
+
     def __init__(self, cr):
         DistributedObject.__init__(self, cr)
         self.districtName = 'Unset'
@@ -11,8 +12,10 @@ class DistributedDistrict(DistributedObject):
         
     def announceGenerate(self):
         DistributedObject.announceGenerate(self)
-        print 'District %s generated!' %self.districtName
-        
+
+        if self.districtType == DistrictGlobals.DISTRICT_PUBLIC:
+            messenger.send('shardInterestComplete', [self.getDoId(), self.districtName, self.available])
+
     def setDistrictName(self, name):
         self.districtName = name
         

@@ -2,6 +2,7 @@ from direct.distributed.DistributedObjectAI import DistributedObjectAI
 import DistrictGlobals
 
 class DistributedDistrictAI(DistributedObjectAI):
+    
     def __init__(self, air):
         DistributedObjectAI.__init__(self, air)
         self.districtName = 'Unset'

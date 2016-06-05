@@ -2,7 +2,7 @@ from direct.distributed.DistributedObjectGlobalUD import DistributedObjectGlobal
 from direct.distributed.PyDatagram import PyDatagram
 from direct.distributed.MsgTypes import *
 from time import gmtime, strftime
-import base64, os, json, pyaes
+import base64, os, json
 
 class AccountManagerUD(DistributedObjectGlobalUD):
     dbStorageFilename = 'db-storage.json'
@@ -12,10 +12,6 @@ class AccountManagerUD(DistributedObjectGlobalUD):
     }
 
     dbId = 4003 # look to the astron config.
-
-    # Encryption:
-    encryptionKey = 'TT2.0_DB_STORE_ENCRYPT__' # This will work for now.
-    aes = pyaes.AESModeOfOperationCTR(encryptionKey)
 
     def __init__(self, air):
         DistributedObjectGlobalUD.__init__(self, air)
@@ -31,12 +27,6 @@ class AccountManagerUD(DistributedObjectGlobalUD):
 
     def generateSeason(self):
         pass
-
-    def encryptValue(self, value):
-        return self.aes.encrypt(value)
-
-    def decryptValue(self, value):
-        return self.aes.decrypt(value)
 
     def requestLogin(self, token, password):
         self.token = token
@@ -68,8 +58,8 @@ class AccountManagerUD(DistributedObjectGlobalUD):
     def createNewAccount(self, token, password):
         fields = {
             'ACCOUNT_AVATARS': [],
-            'ACCOUNT_USERNAME': self.encryptValue(token),
-            'ACCOUNT_PASSWORD': self.encryptValue(password),
+            'ACCOUNT_USERNAME': token,
+            'ACCOUNT_PASSWORD': password,
             'ACCOUNT_TIME_CREATED': strftime("%Y-%m-%d %H:%M:%S", gmtime()),
             'ACCOUNT_LAST_LOGIN': strftime("%Y-%m-%d %H:%M:%S", gmtime())
         }
