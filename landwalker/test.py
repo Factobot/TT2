@@ -29,7 +29,7 @@ class PlayAssistant(FSM):
         self.setupWalk()
         
     def setupWalk(self):
-        gravityWalker = GravityWalker.GravityWalker(gravity=32.174, legacyLifter=self.wantLegacyLifter)
+        gravityWalker = GravityWalker.GravityWalker(gravity=41.174, legacyLifter=self.wantLegacyLifter)
         gravityWalker.setWallBitMask(ToontownGlobals.WallBitmask)
         gravityWalker.setFloorBitMask(ToontownGlobals.FloorBitmask)
         gravityWalker.initializeCollisions(self.cTrav, self.toon, self.avatarRadius, self.floorOffset, self.reach)
