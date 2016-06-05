@@ -1,12 +1,12 @@
 from panda3d.core import *
 from direct.showbase.DirectObject import *
 from direct.task.Task import Task
-CameraFactor = 0.3
 
 class InteractiveCameraDriver(DirectObject):
-    PITCH_LIMIT = 10
+    PITCH_LIMIT = 90
     MAX_CAM_DISTANCE = 8.5
     MIN_CAM_DISTANCE = 0
+    CameraFactor = 0.3
 
     def __init__(self, camera, cameraColl = True):
         self.camera = camera
@@ -50,7 +50,7 @@ class InteractiveCameraDriver(DirectObject):
         self.cameraParent.setPosHpr(0,0,0,0,0,0)
 
     def __updateCanControl(self, task):
-        if self.target.getY(self.cameraParent) == self.MIN_CAM_DISTANCE:
+        if self.target.getY(self.cameraParent) == InteractiveCameraDriver.MIN_CAM_DISTANCE:
 
             if self.cameraParent.getHpr() == Vec3(0,0,0) and self.cameraParent.getPos() == Vec3(0,0,0):
                 self.canControlCam = True
@@ -66,14 +66,14 @@ class InteractiveCameraDriver(DirectObject):
         if self.cameraParent != None:
 
             if self.canZoom:
-                if self.target.getY(self.cameraParent) > self.MIN_CAM_DISTANCE < self.MAX_CAM_DISTANCE:
+                if self.target.getY(self.cameraParent) > InteractiveCameraDriver.MIN_CAM_DISTANCE < InteractiveCameraDriver.MAX_CAM_DISTANCE:
                     self.cameraParent.setY(self.cameraParent.getY() + 1.0)
 
     def __handleCameraOut(self):
         if self.cameraParent != None:
 
             if self.canZoom:
-                if self.target.getY(self.cameraParent) < self.MAX_CAM_DISTANCE > self.MIN_CAM_DISTANCE:
+                if self.target.getY(self.cameraParent) < InteractiveCameraDriver.MAX_CAM_DISTANCE > InteractiveCameraDriver.MIN_CAM_DISTANCE:
                     self.cameraParent.setY(self.cameraParent.getY() - 1.0)
         
     def stop(self):
@@ -98,11 +98,13 @@ class InteractiveCameraDriver(DirectObject):
                 heading = self.cameraParent.getH()
                 pitch = self.cameraParent.getP()
                 if base.win.movePointer(0, self.mouseCoords[0], self.mouseCoords[1]):
-                    heading -= (x - self.mouseCoords[0]) * CameraFactor
-                    pitch -= (y - self.mouseCoords[1]) * CameraFactor
+                    heading -= (x - self.mouseCoords[0]) * InteractiveCameraDriver.CameraFactor
+                    pitch -= (y - self.mouseCoords[1]) * InteractiveCameraDriver.CameraFactor
 
-                    if pitch > self.PITCH_LIMIT:
-                        pitch = self.PITCH_LIMIT
+                    if pitch > InteractiveCameraDriver.PITCH_LIMIT:
+                        pitch = InteractiveCameraDriver.PITCH_LIMIT
+                    elif pitch < -InteractiveCameraDriver.PITCH_LIMIT:
+                        pitch = -InteractiveCameraDriver.PITCH_LIMIT
                         
                 self.cameraParent.setHpr(heading, pitch, 0)
         
