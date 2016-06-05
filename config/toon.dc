@@ -4,6 +4,7 @@ from direct.distributed import DistributedNode/AI/UD
 from direct.distributed import DistributedSmoothNode/AI
 from direct.distributed import DistributedObjectGlobal/AI/UD
 from toontown.uberdog import AccountManager/UD
+from toontown.ai import DistributedDistrict/AI
 //from toontown.avatar import DistributedAvatar/AI
 //from toontown.toon import DistributedToon/AI
 
@@ -101,4 +102,10 @@ dclass DistributedAvatar : DistributedObject {
 dclass DistributedToon : DistributedAvatar, DistributedSmoothNode {
   setDNAString(blob) required broadcast ram db;
   setAnimState(char [1-100]) broadcast ownsend ram airecv;
+};
+
+dclass DistributedDistrict : DistributedObject {
+    setDistrictName(string) required broadcast ram;
+    setDistrictType(uint8) required broadcast ram;
+    setAvailable(uint8) required broadcast ram;
 };

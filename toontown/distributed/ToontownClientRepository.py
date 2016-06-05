@@ -98,11 +98,6 @@ class ToontownClientRepository(ClientRepositoryBase, FSM):
     def _enterPickAToon(self, avList):
         self.tookPicker = ToonPicker(avList, 'ToonPickerDone')
         base.loadingScreen.enablePlay(avList)
-        #self.loadingWait = Sequence(
-        #    Wait(17.5),
-        #    Func(self.removeLoadingScreen),
-        #    Func(self._handleLoginDone, avList)
-        #).start()
 
     def _handleLoginDone(self, avList):
         self.forceTransition('LoginDone', avList)
