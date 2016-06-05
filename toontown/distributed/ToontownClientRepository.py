@@ -48,7 +48,6 @@ class ToontownClientRepository(ClientRepositoryBase, FSM):
         self.accountDetails = accountDetails
         self.accountManager = self.generateGlobalObject(self.DO_ID_ACCOUNT_MANAGER, 'AccountManager')
         self.listShardMap = { }
-        self.canActivateShard = False
 
     def getPlayToken(self):
         return str(self.accountDetails[0])
