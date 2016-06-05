@@ -14,7 +14,7 @@ class DistributedDistrict(DistributedObject):
         DistributedObject.announceGenerate(self)
 
         if self.districtType == DistrictGlobals.DISTRICT_PUBLIC:
-            messenger.send('shardInterestComplete', [self.getDoId(), self.districtName, self.available])
+            messenger.send('shardInterestComplete', [self.getDoId(), self.districtName, self.districtType, self.available])
 
     def setDistrictName(self, name):
         self.districtName = name

@@ -47,7 +47,8 @@ class ToontownClientRepository(ClientRepositoryBase, FSM):
         self.serverList = serverList
         self.accountDetails = accountDetails
         self.accountManager = self.generateGlobalObject(self.DO_ID_ACCOUNT_MANAGER, 'AccountManager')
-        self.listShardMap = []
+        self.listShardMap = { }
+        self.canActivateShard = False
 
     def getPlayToken(self):
         return str(self.accountDetails[0])
@@ -97,18 +98,14 @@ class ToontownClientRepository(ClientRepositoryBase, FSM):
         self.acceptOnce('uberdogHandleDone', self._handleUberdogResp, [avList])
 
     def _handleUberdogResp(self, avList):
-        self.shardHandle = self.addInterest(self.GameGlobalsId, 2, 'shardHandle', 'shardHandleDone')
-        # TODO: Check for an AI shard object!
-        self.accept('shardHandleDone', self._handleShardResp, [avList])
-
-    def _handleShardResp(self, avList):
         self.accept('shardInterestComplete', self._handleShardGenerated, [avList])
+        self.shardHandle = self.addInterest(self.GameGlobalsId, 2, 'shardHandle')
 
-    def _handleShardGenerated(self, shardDoId, shardName, shardStatus, avList):
-        if shardDoId in self.listShardMap:
+    def _handleShardGenerated(self, shardDoId, shardName, shardType, shardStatus, avList):
+        if shardDoId in self.listShardMap.keys():
             del self.listShardMap[shardDoId]
 
-        self.listShardMap[shardDoId] = [shardName, shardStatus]
+        self.listShardMap[shardDoId] = [shardName, shardType, shardStatus]
 
         if shardStatus:
             self._enterPickAToon(avList)
