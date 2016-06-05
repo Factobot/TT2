@@ -2,6 +2,7 @@ from direct.controls.ControlManager import *
 from direct.showbase.InputStateGlobal import inputState
 
 class ToontownControlManager(ControlManager):
+    
     def __init__(self, *args):
         ControlManager.__init__(self, args)
         
