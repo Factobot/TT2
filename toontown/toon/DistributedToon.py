@@ -10,6 +10,7 @@ class DistributedToon(Toon, DistributedSmoothNode, DistributedAvatar):
         Toon.__init__(self)
         DistributedAvatar.__init__(self, cr)
         DistributedSmoothNode.__init__(self, cr)
+        self.curAnimState = ''
 
     def generate(self):
         DistributedSmoothNode.generate(self)
@@ -25,5 +26,16 @@ class DistributedToon(Toon, DistributedSmoothNode, DistributedAvatar):
     def disable(self):
         DistributedSmoothNode.disable(self)
         DistributedSmoothNode.b_setParent(ToontownGlobals.ToonHidden)
-        
     
+    def setAnimState(self, animName):
+        self.curAnimState = animName
+        self.animFSM.request(animName)
+        
+    def d_setAnimState(self, animState):
+        self.sendUpdate("setAnimState", [animState])
+        
+    def b_setAnimState(self, animState):
+        self.setAnimState(animState)
+        self.d_setAnimState(animState)
+                
+        

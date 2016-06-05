@@ -7,6 +7,7 @@ class DistributedToonAI(DistributedAvatarAI, DistributedSmoothNodeAI):
         DistributedAvatarAI.__init__(self, air)
         DistributedSmoothNodeAI.__init__(self, air)
         self.dnaString = ''
+        self.animState = ''
         
     def b_setDNAString(self, dnaStr):
         self.setDNAString(dnaStr)
@@ -20,3 +21,9 @@ class DistributedToonAI(DistributedAvatarAI, DistributedSmoothNodeAI):
         
     def getDNAString(self, dnaStr):
         return self.dnaString
+        
+    def setAnimState(self, animState):
+        self.animState = animState
+        
+    def getAnimState(self, animState):
+        return self.animState

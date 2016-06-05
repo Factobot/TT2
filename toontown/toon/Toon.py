@@ -474,6 +474,7 @@ class Toon(Avatar, ToonHead):
          State('walk', self.enterWalk, self.exitWalk),
          State('jumpSquat', self.enterJumpSquat, self.exitJumpSquat),
          State('jump', self.enterJump, self.exitJump),
+         State('jumpRunning', self.enterRunningJump, self.exitRunningJump),
          State('jumpAirborne', self.enterJumpAirborne, self.exitJumpAirborne),
          State('jumpLand', self.enterJumpLand, self.exitJumpLand),
          State('run', self.enterRun, self.exitRun),
@@ -1462,14 +1463,16 @@ class Toon(Avatar, ToonHead):
             return self.getDuration('running-jump', 'legs')
 
     def enterJump(self, animMultiplier = 1, ts = 0, callback = None, extraArgs = []):
-        if not self.isDisguised:
-            if self.playingAnim == 'neutral':
-                anim = 'jump'
-            else:
-                anim = 'running-jump'
-            self.playingAnim = anim
-            self.setPlayRate(animMultiplier, anim)
-            self.play(anim)
+        anim = 'jump'
+        self.playingAnim = anim
+        self.setPlayRate(animMultiplier, anim)
+        self.play(anim)
+            
+    def enterRunningJump(self, animMultiplier = 1, ts = 0, callback = None, extraArgs = []):
+        anim = 'running-jump-land'
+        self.playingAnim = anim
+        self.setPlayRate(animMultiplier, anim)
+        self.loop(anim, fromFrame=1, toFrame=1)
         
 
     def exitJump(self):
@@ -1485,6 +1488,10 @@ class Toon(Avatar, ToonHead):
             self.playingAnim = anim
             self.setPlayRate(animMultiplier, anim)
             self.play(anim)
+            
+    def exitRunningJump(self):
+        self.stop()
+        self.playingAnim = 'neutral'
         
 
     def exitJumpSquat(self):
@@ -1526,12 +1533,10 @@ class Toon(Avatar, ToonHead):
     def enterRun(self, animMultiplier = 1, ts = 0, callback = None, extraArgs = []):
         self.loop('run')
         self.setPlayRate(animMultiplier, 'run')
-        Emote.globalEmote.disableBody(self, 'toon, enterRun')
         
 
     def exitRun(self):
         self.stop()
-        Emote.globalEmote.releaseBody(self, 'toon, exitRun')
 
     def enterSwim(self, animMultiplier = 1, ts = 0, callback = None, extraArgs = []):
         Emote.globalEmote.disableAll(self, 'enterSwim')
