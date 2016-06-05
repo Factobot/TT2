@@ -91,6 +91,11 @@ class ToontownClientRepository(ClientRepositoryBase, FSM):
         base.loadingScreen.exit()
 
     def _handleLoginResp(self, avList):
+        self.uberdogHandle = self.addInterest(self.GameGlobalsId, 0, 'uberdogHandle', 'uberdogHandleDone')
+        # TODO: Check for an AI shard object!
+        self.acceptOnce('uberdogHandleDone', self._enterPickAToon, [avList])
+
+    def _enterPickAToon(self, avList):
         self.tookPicker = ToonPicker(avList, 'ToonPickerDone')
         base.loadingScreen.enablePlay(avList)
         #self.loadingWait = Sequence(
