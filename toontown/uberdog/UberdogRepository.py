@@ -1,7 +1,7 @@
 from direct.distributed.AstronInternalRepository import AstronInternalRepository
 from direct.distributed.DistributedObjectAI import DistributedObjectAI
 from direct.distributed.PyDatagram import *
-from toontown.distributed GameGlobals import *
+from toontown.distributed.GameGlobals import *
 
 class UberdogRepository(AstronInternalRepository):
     def __init__(self, dcFileNames, baseChannel, serverId):
