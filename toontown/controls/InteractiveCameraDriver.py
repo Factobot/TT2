@@ -3,7 +3,8 @@ from direct.showbase.DirectObject import *
 from direct.task.Task import Task
 
 class InteractiveCameraDriver(DirectObject):
-    PITCH_LIMIT = 90
+    PITCH_LIMIT_TOP = -50
+    PITCH_LIMIT_BOT = 10
     MAX_CAM_DISTANCE = 8.5
     MIN_CAM_DISTANCE = 0
     CameraFactor = 0.3
@@ -101,10 +102,10 @@ class InteractiveCameraDriver(DirectObject):
                     heading -= (x - self.mouseCoords[0]) * InteractiveCameraDriver.CameraFactor
                     pitch -= (y - self.mouseCoords[1]) * InteractiveCameraDriver.CameraFactor
 
-                    if pitch > InteractiveCameraDriver.PITCH_LIMIT:
-                        pitch = InteractiveCameraDriver.PITCH_LIMIT
-                    elif pitch < -InteractiveCameraDriver.PITCH_LIMIT:
-                        pitch = -InteractiveCameraDriver.PITCH_LIMIT
+                    if pitch > InteractiveCameraDriver.PITCH_LIMIT_BOT:
+                        pitch = InteractiveCameraDriver.PITCH_LIMIT_BOT
+                    elif pitch < InteractiveCameraDriver.PITCH_LIMIT_TOP:
+                        pitch = InteractiveCameraDriver.PITCH_LIMIT_TOP
                         
                 self.cameraParent.setHpr(heading, pitch, 0)
         

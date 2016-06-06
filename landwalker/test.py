@@ -1,5 +1,6 @@
 import direct.directbase.DirectStart, random
 from panda3d.core import *
+loadPrcFileData("", "model-path resources/")
 from direct.controls import GravityWalker
 from direct.fsm.FSM import *
 from toontown.toon.Toon import Toon
@@ -11,29 +12,21 @@ from toontown.toon.PlayAssistant import PlayAssistant
 
 loadPrcFileData("", "default-model-extension .bam")
         
-ground = loader.loadModel("phase_6/models/neighborhoods/donalds_dock")
+ground = loader.loadModel('phase_4/models/neighborhoods/toontown_central')#("phase_6/models/neighborhoods/donalds_dock")
 ground.reparentTo(render)
 
-boat = ground.find('**/donalds_boat')
-boat.setPos(-70, -40.2601, -5)
+#boat = ground.find('**/donalds_boat')
+#boat.setPos(-70, -40.2601, -5)
 
-water = ground.find('**/water')
-water.setTransparency(1)
-water.setColor(1, 1, 1, 0.8)
+#water = ground.find('**/water')
+#water.setTransparency(1)
+#water.setColor(1, 1, 1, 0.8)
         
 dna1 = ToonDNA('t\x11\x04\x00\x01\x00\x1b\x00\x1b\x00\x1b\x06\x00\x06\x06')
-dna2 = ToonDNA()
-dna3 = ToonDNA()
-dna4 = ToonDNA()
-dna5 = ToonDNA()
-dna6 = ToonDNA()
-dna7 = ToonDNA()
-dna8 = ToonDNA()
-dna9 = ToonDNA()
-dna10 = ToonDNA()
-
-dnalist = [dna1, dna2, dna3, dna4, dna5, dna6, dna7, dna8, dna9, dna10]
-dna = random.choice(dnalist)
+dnaList = [dna1]
+for i in range(10):
+    dnaList.append(ToonDNA())
+dna = random.choice(dnaList)
 
 if dna == dna1:
  print("DNAManager: Got rare SillyPeppyMcSpeed DNA!")
