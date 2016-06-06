@@ -50,8 +50,8 @@ class ToontownClientRepository(ClientRepositoryBase, FSM):
         self.serverVersion = serverVersion
         self.serverList = serverList
         self.accountDetails = accountDetails
-        self.accountManager = self.generateGlobalObject(self.DO_ID_ACCOUNT_MANAGER, 'AccountManager')
-        self.avatarManager = self.generateGlobalObject(self.DO_ID_AVATAR_MANAGER, 'AvatarManager')
+        self.accountManager = self.generateGlobalObject(GameGlobals.DO_ID_ACCOUNT_MANAGER, 'AccountManager')
+        self.avatarManager = self.generateGlobalObject(GameGlobals.DO_ID_AVATAR_MANAGER, 'AvatarManager')
         self.listShardMap = { }
 
     def getPlayToken(self):
