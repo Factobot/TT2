@@ -14,5 +14,9 @@ class ToontropolisCityAI:
         
     def start(self):
         for blockZone in BlockMap.keys():
-            self.block2Starters[blockZone] = BlockMap[blockZone](self.air, self.zone)
-            self.block2Starters[blockZone].start()
+            for startM in BlockMap[blockZone]:
+                if not self.block2Starters.has_key(blockZone):
+                    self.block2Starters[blockZone] = []
+                st = startM(self.air, self.zone)
+                st.start()
+                self.block2Starters[blockZone].append(st)
