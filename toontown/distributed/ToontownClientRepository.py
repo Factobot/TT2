@@ -7,7 +7,7 @@ from direct.distributed.MsgTypes import *
 from direct.interval.IntervalGlobal import *
 from toontown.login.ToonPicker import ToonPicker
 from toontown.makeatoon.MakeAToon import MakeAToon
-from toontown.distributed.GameGlobals import *
+from toontown.distributed import GameGlobals
 from toontown.distributed.PotentialToon import PotentialToon
 
 class ToontownClientRepository(ClientRepositoryBase, FSM):
