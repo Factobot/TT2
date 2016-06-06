@@ -13,6 +13,7 @@ from toontown.distributed.PotentialToon import PotentialToon
 class ToontownClientRepository(ClientRepositoryBase, FSM):
     notify = directNotify.newCategory("ToontownClientRepository")
     notifier = notify # assert notifier
+    GameGlobalsId = GameGlobals.GameGlobalsId
     
     defaultTransitions = {
         'Off': [

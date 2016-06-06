@@ -1,10 +1,13 @@
 from direct.distributed.AstronInternalRepository import AstronInternalRepository
 from direct.distributed.DistributedObjectAI import DistributedObjectAI
 from direct.distributed.PyDatagram import *
-from toontown.distributed.GameGlobals import *
+from toontown.distributed import GameGlobals
 
 class UberdogRepository(AstronInternalRepository):
     def __init__(self, dcFileNames, baseChannel, serverId):
+        self.GameGlobalsId = GameGlobals.GameGlobalsId
+        self.DO_ID_ACCOUNT_MANAGER = GameGlobals.DO_ID_ACCOUNT_MANAGER
+        self.DO_ID_AVATAR_MANAGER = GameGlobals.DO_ID_AVATAR_MANAGER
         AstronInternalRepository.__init__(self, baseChannel, serverId, dcFileNames, dcSuffix='UD')
         
     def getAvatarIdFromSender(self):
