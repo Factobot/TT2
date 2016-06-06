@@ -3,7 +3,7 @@ from direct.distributed.PyDatagram import *
 from direct.distributed.MsgTypes import *
 from direct.fsm.FSM import *
 from toontown.toon.ToonDNA import ToonDNA
-import toontown.login import PickerGlobals
+from toontown.login import PickerGlobals
 
 class AvatarCreation(FSM):
     def __init__(self, avMgr, accId, slot, name, dna):
