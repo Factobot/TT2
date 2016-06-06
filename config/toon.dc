@@ -5,8 +5,9 @@ from direct.distributed import DistributedSmoothNode/AI
 from direct.distributed import DistributedObjectGlobal/AI/UD
 from toontown.uberdog import AccountManager/UD
 from toontown.ai import DistributedDistrict/AI
-//from toontown.avatar import DistributedAvatar/AI
-//from toontown.toon import DistributedToon/AI
+from toontown.avatar import DistributedAvatar/AI/UD
+from toontown.toon import DistributedToon/AI
+from toontown.uberdog import AvatarManager/UD
 
 typedef uint8 bool;
 typedef uint32 DoId;
@@ -105,7 +106,12 @@ dclass DistributedToon : DistributedAvatar, DistributedSmoothNode {
 };
 
 dclass DistributedDistrict : DistributedObject {
-    setDistrictName(string) required broadcast ram;
-    setDistrictType(uint8) required broadcast ram;
-    setAvailable(uint8) required broadcast ram;
+  setDistrictName(string) required broadcast ram;
+  setDistrictType(uint8) required broadcast ram;
+  setAvailable(uint8) required broadcast ram;
 };
+
+dclass AvatarManager : DistributedObjectGlobal {
+  requestCreateAvatar(uint8, string, blob) clsend;
+  createAvatarResponse(uint32);
+}

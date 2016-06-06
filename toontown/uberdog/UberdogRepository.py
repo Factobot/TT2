@@ -1,11 +1,9 @@
 from direct.distributed.AstronInternalRepository import AstronInternalRepository
 from direct.distributed.DistributedObjectAI import DistributedObjectAI
 from direct.distributed.PyDatagram import *
+from toontown.distributed GameGlobals import *
 
 class UberdogRepository(AstronInternalRepository):
-    GameGlobalsId = 1000
-    DO_ID_ACCOUNT_MANAGER = 1001
-
     def __init__(self, dcFileNames, baseChannel, serverId):
         AstronInternalRepository.__init__(self, baseChannel, serverId, dcFileNames, dcSuffix='UD')
         
@@ -26,3 +24,4 @@ class UberdogRepository(AstronInternalRepository):
     
     def generateGlobals(self):
         self.accountManager = self.generateGlobalObject(self.DO_ID_ACCOUNT_MANAGER, 'AccountManager')
+        self.avatarManager = self.generateGlobalObject(self.DO_ID_AVATAR_MANAGER, 'AvatarManager')

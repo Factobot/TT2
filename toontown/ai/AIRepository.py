@@ -2,6 +2,8 @@ from direct.distributed.AstronInternalRepository import AstronInternalRepository
 from direct.distributed.PyDatagram import PyDatagram
 from direct.distributed.MsgTypes import *
 from toontown.ai.DistributedDistrictAI import DistributedDistrictAI
+from toontown.city.CityHandleAI import CityHandleAI
+from toontown.toonbase import ToontownGlobals
 
 class AIRepository(AstronInternalRepository):
     GameGlobalsId = 1000
@@ -10,6 +12,7 @@ class AIRepository(AstronInternalRepository):
         AstronInternalRepository.__init__(self, baseChannel, serverId, dcFileNames, dcSuffix='AI')
         self.districtName = districtName
         self.districtType = districtType
+        self.cityHandles = {}
         
     def handleConnected(self):
         AstronInternalRepository.handleConnected(self)
@@ -27,6 +30,15 @@ class AIRepository(AstronInternalRepository):
         self.districtObject.b_setAvailable(1)
         
         self.createGlobals()
+        self.createZones()
         
     def createGlobals(self):
         pass
+        
+    def createZones(self):
+        for cityZone in ToontownGlobals.ToontownZones.keys():
+            self.cityHandles[cityZone] = CityHandleAI(self, cityZone)
+            self.cityHandles[cityZone].processCity()
+    
+    
+        

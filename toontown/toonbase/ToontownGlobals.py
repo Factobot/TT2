@@ -1,5 +1,17 @@
 from panda3d.core import *
 
+# Zones
+TOON_CONTINENT_ZONE = 10000 # That's just a base, only used for calcs
+TOONTROPOLIS_ZONE = TOON_CONTINENT_ZONE + 100
+ToontownZones = {
+    TOONTROPOLIS_ZONE: [
+        #here goes city blocks zones, they should be used only in client side
+        #for handling what needs to be rendered in this block
+        TOONTROPOLIS_ZONE + 1
+    ]
+}
+
+
 # Toon control options
 ToonSpeedFactor = 1.25
 ToonForwardSpeed = 16.0 * ToonSpeedFactor

@@ -7,6 +7,8 @@ from direct.distributed.MsgTypes import *
 from direct.interval.IntervalGlobal import *
 from toontown.login.ToonPicker import ToonPicker
 from toontown.makeatoon.MakeAToon import MakeAToon
+from toontown.distributed.GameGlobals import *
+from toontown.distributed.PotentialToon import PotentialToon
 
 class ToontownClientRepository(ClientRepositoryBase, FSM):
     notify = directNotify.newCategory("ToontownClientRepository")
@@ -33,11 +35,13 @@ class ToontownClientRepository(ClientRepositoryBase, FSM):
             'enterCreateToon'
         ],
         'enterCreateToon': [
+            'exitCreateToon',
+            'enterWaitSetAvatar'
+        ],
+        'enterWaitSetAvatar': [
+            
         ]
     }
-
-    GameGlobalsId = 1000
-    DO_ID_ACCOUNT_MANAGER = 1001
 
     def __init__(self, dcFileNames, serverVersion, serverList, accountDetails):
         ClientRepositoryBase.__init__(self, dcFileNames)
@@ -47,6 +51,7 @@ class ToontownClientRepository(ClientRepositoryBase, FSM):
         self.serverList = serverList
         self.accountDetails = accountDetails
         self.accountManager = self.generateGlobalObject(self.DO_ID_ACCOUNT_MANAGER, 'AccountManager')
+        self.avatarManager = self.generateGlobalObject(self.DO_ID_AVATAR_MANAGER, 'AvatarManager')
         self.listShardMap = { }
 
     def getPlayToken(self):
@@ -132,11 +137,27 @@ class ToontownClientRepository(ClientRepositoryBase, FSM):
         if self.tookPicker:
             self.tookPicker.exit()
 
-        self.makeAToon = MakeAToon('CreatedAvatar')
+        self.makeAToon = MakeAToon(slot, 'MakeAToon__CreatedAvatar')
         self.makeAToon.enter()
+        self.accept('MakeAToon__CreatedAvatar', self.__handleAvatarCreated)
         
     def exitCreateToon(self):
-        pass
+        self.makeAToon.exit()
+        
+    def __handleAvatarCreated(self, slot, name, dna):
+        self.avatarManager.createAvatar(slot, name, dna)
+        self.accept('AvatarManager__AvatarCreationDone', self.__handleDBCreationDone)
+        
+    def __handleDBCreationDone(self, avId):
+        potToon = PotentialToon(avId)
+        self.request('WaitSetAvatar', [potToon])
+        
+    def enterWaitSetAvatar(self, potAv):
+        self.avData = potAv
+        self.sendSetAvatarId(potAv.doId)
+        
+    def sendSetAvatarId(self, avId):
+        self.avMgr.sendChooseAvatar(avId)
     
     def handleDatagram(self, di):
         self.handleMessageType(di, self.getMsgType())
