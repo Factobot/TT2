@@ -16,13 +16,13 @@ class AIRepository(AstronInternalRepository):
         
     def handleConnected(self):
         AstronInternalRepository.handleConnected(self)
-        self.districtID = self.allocateChannel()
+        self.districtId = self.allocateChannel()
         self.districtObject = DistributedDistrictAI(self)
         self.districtObject.setDistrictName(self.districtName)
-        self.districtObject.generateWithRequiredAndId(self.districtID, self.getGameDoId(), 2)
+        self.districtObject.generateWithRequiredAndId(self.districtId, self.getGameDoId(), 2)
         
         dg = PyDatagram()
-        dg.addServerHeader(self.districtID, self.ourChannel, STATESERVER_OBJECT_SET_AI)
+        dg.addServerHeader(self.districtId, self.ourChannel, STATESERVER_OBJECT_SET_AI)
         dg.addChannel(self.ourChannel)
         self.send(dg)
         

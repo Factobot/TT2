@@ -1,4 +1,4 @@
-from direct.distributed.DistributedObject import DistributedObject
+from direct.distributed.DistributedObjectAI import DistributedObjectAI
 
 class TestStarter:
     def __init__(self, air, zoneId):
@@ -6,5 +6,5 @@ class TestStarter:
         self.zoneId = zoneId
         
     def start(self):
-        self.testObject = DistributedObject(self.air)
+        self.testObject = DistributedObjectAI(self.air)
         self.testObject.generateWithRequired(self.zoneId)
