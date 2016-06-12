@@ -766,7 +766,6 @@ class Toon(Avatar, ToonHead):
         self.parentToonParts()
         self.rescaleToon()
         self.resetHeight()
-        del self.shadowJoint
 
     def generateToonTorso(self, copy = 1, genClothes = 1):
         torsoStyle = self.style.torso

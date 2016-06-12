@@ -11,3 +11,6 @@ class Avatar:
         
     def setHeight(self, height):
         self.height = height
+        
+    def setStyle(self, style):
+        self.style = style

@@ -5,8 +5,6 @@ TOON_CONTINENT_ZONE = 10000 # That's just a base, only used for calcs
 TOONTROPOLIS_ZONE = TOON_CONTINENT_ZONE + 100
 ToontownZones = {
     TOONTROPOLIS_ZONE: [
-        #here goes city blocks zones, they should be used only in client side
-        #for handling what needs to be rendered in this block
         TOONTROPOLIS_ZONE + 1
     ]
 }
@@ -108,3 +106,7 @@ ToonRender = 1
 
 def getMickeyFont():
     return loader.loadFont("phase_3/models/fonts/MickeyFont.bam")
+    
+def getToonFont():
+    return loader.loadFont("phase_3/models/fonts/ImpressBT.ttf")
+    
