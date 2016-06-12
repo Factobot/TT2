@@ -367,12 +367,12 @@ class MakeAToonSpaceGUI(FSM):
         
     def makeArrow(self, invert = 0, **kw):
         bt = DirectButton(
-            image = loader.loadTexture("stage_3/maps/arrow.png"),
-            scale=(0.2,1,0.15),
+            image = (loader.loadTexture("stage_3/maps/arrow.png"), loader.loadTexture("stage_3/maps/arrow_hover.png")),
+            scale=(0.24,1,0.15),
             relief=None,
             text_font=ToontownGlobals.getToonFont(),
-            text_pos=(0,-0.0),
-            text_scale=0.4,
+            text_pos=(0,-0.2),
+            text_scale=(0.3,0.4),
             text_mayChange = 1,
             **kw
         )

@@ -1704,7 +1704,7 @@ class Toon(Avatar, ToonHead):
 
     def getSoundTeleport(self):
         if not self.soundTeleport:
-            self.soundTeleport = base.loadSfx('phase_3.5/audio/sfx/AV_teleport.ogg')
+            self.soundTeleport = base.loadSfx('phase_3.5/audio/sfx/AV_teleport.mp3')
         return self.soundTeleport
 
     def getTeleportOutTrack(self, autoFinishTrack = 1):
@@ -1748,39 +1748,21 @@ class Toon(Avatar, ToonHead):
         pass
 
     def enterTeleportOut(self, animMultiplier = 1, ts = 0, callback = None, extraArgs = []):
-        name = self.name
-        if hasattr(self, 'doId'):
-            name += '-' + str(self.doId)
-        self.notify.debug('enterTeleportOut %s' % name)
-        if self.ghostMode or self.isDisguised:
-            if callback:
-                callback(*extraArgs)
-            return
         self.playingAnim = 'teleport'
-        Emote.globalEmote.disableAll(self, 'enterTeleportOut')
-        if self.isLocal():
-            autoFinishTrack = 0
-        else:
-            autoFinishTrack = 1
+        autoFinishTrack = 0
         self.track = self.getTeleportOutTrack(autoFinishTrack)
         self.track.setDoneEvent(self.track.getName())
         self.acceptOnce(self.track.getName(), self.finishTeleportOut, [callback, extraArgs])
         holeClip = PlaneNode('holeClip')
         self.holeClipPath = self.attachNewNode(holeClip)
         self.getGeomNode().setClipPlane(self.holeClipPath)
-        self.nametag3d.setClipPlane(self.holeClipPath)
         self.track.start(ts)
         
 
     def finishTeleportOut(self, callback = None, extraArgs = []):
-        name = self.name
-        if hasattr(self, 'doId'):
-            name += '-' + str(self.doId)
-        self.notify.debug('finishTeleportOut %s' % name)
         if self.track != None:
             self.ignore(self.track.getName())
             self.track.finish()
-            DelayDelete.cleanupDelayDeletes(self.track)
             self.track = None
         if hasattr(self, 'animFSM'):
             self.animFSM.request('TeleportedOut')
@@ -1789,10 +1771,6 @@ class Toon(Avatar, ToonHead):
         return
 
     def exitTeleportOut(self):
-        name = self.name
-        if hasattr(self, 'doId'):
-            name += '-' + str(self.doId)
-        self.notify.debug('exitTeleportOut %s' % name)
         if self.track != None:
             self.ignore(self.track.getName())
             self.track.finish()
@@ -1800,12 +1778,9 @@ class Toon(Avatar, ToonHead):
         geomNode = self.getGeomNode()
         if geomNode and not geomNode.isEmpty():
             self.getGeomNode().clearClipPlane()
-        if self.nametag3d and not self.nametag3d.isEmpty():
-            self.nametag3d.clearClipPlane()
         if self.holeClipPath:
             self.holeClipPath.removeNode()
             self.holeClipPath = None
-        Emote.globalEmote.releaseAll(self, 'exitTeleportOut')
         if self and not self.isEmpty():
             self.show()
         return
@@ -1900,16 +1875,10 @@ class Toon(Avatar, ToonHead):
         return Parallel(holeTrack, toonTrack, name=trackName)
 
     def enterTeleportIn(self, animMultiplier = 1, ts = 0, callback = None, extraArgs = []):
-        if self.ghostMode or self.isDisguised:
-            if callback:
-                callback(*extraArgs)
-            return
         self.show()
         self.playingAnim = 'teleport'
-        Emote.globalEmote.disableAll(self, 'enterTeleportIn')
         self.pose('teleport', self.getNumFrames('teleport') - 1)
         self.getGeomNode().hide()
-        self.nametag3d.hide()
         self.track = self.getTeleportInTrack()
         if callback:
             self.track.setDoneEvent(self.track.getName())
@@ -1924,10 +1893,6 @@ class Toon(Avatar, ToonHead):
             self.track.finish()
             DelayDelete.cleanupDelayDeletes(self.track)
             self.track = None
-        if not self.ghostMode and not self.isDisguised:
-            self.getGeomNode().show()
-            self.nametag3d.show()
-        Emote.globalEmote.releaseAll(self, 'exitTeleportIn')
         return
 
     def enterSitStart(self, animMultiplier = 1, ts = 0, callback = None, extraArgs = []):

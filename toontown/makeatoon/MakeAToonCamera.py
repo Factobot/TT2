@@ -39,3 +39,10 @@ class MakeAToonCamera(FSM):
             Func(self.makeAToon.ccCamDone)
         )
         self.ccIv.start()
+        
+    def enterFadeOffCamera(self):
+        self.foIv = Sequence(
+            base.cam.posInterval(5, (3, -15, 3.5), blendType='easeOut'),
+            Func(self.makeAToon.foCamDone)
+        )
+        self.foIv.start()

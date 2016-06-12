@@ -10,7 +10,9 @@ class ToonBase(ShowBase, AudioManager):
     def __init__(self, *args, **kwArgs):
         ShowBase.__init__(self, args, kwArgs)
         self.audioManager = AudioManager()
-
+        self.transitions.IrisModelName = 'phase_3/models/misc/iris'
+        self.transitions.FadeModelName = 'phase_3/models/misc/fade'
+        
         self.loader = ToontownLoader(self)
         self.accept('f1', self.takeScreenShot)
     

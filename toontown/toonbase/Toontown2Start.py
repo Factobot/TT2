@@ -5,6 +5,7 @@ loadPrcFile("config/dev.prc")
 
 from toontown.toonbase.ToonBase import ToonBase
 from toontown.toonbase.ToonSettings import ToonSettings
+from direct.gui import DirectGuiGlobals
 
 settings = ToonSettings()
 settings.read()
@@ -17,6 +18,9 @@ try:
     base.createToonBase()
 except:
     raise #Exception('Could not init createToonBase!')
+    
+DirectGuiGlobals.setDefaultRolloverSound(base.loadSfx('phase_3/audio/sfx/GUI_rollover.mp3'))
+DirectGuiGlobals.setDefaultClickSound(base.loadSfx('stage_3/audio/sfx/GUI_click.ogg'))
 
 from toontown.distributed.ToontownClientRepository import ToontownClientRepository
 serverVersion = config.GetString('server-version')

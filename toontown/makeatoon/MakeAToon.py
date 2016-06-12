@@ -56,13 +56,21 @@ class MakeAToon(FSM):
         self.closet.reparentTo(render)
         self.closet.setPos(7.12, 6.21, 0)
         self.closet.setH(-90)
+        lNode = self.closet.find('**/door_rotate_L')
+        lDoor = self.closet.find('**/closetdoor_L')
+        lDoor.wrtReparentTo(lNode)
+        self.lDoor = lNode
+        rNode = self.closet.find('**/door_rotate_R')
+        rDoor = self.closet.find('**/closetdoor_R')
+        rDoor.wrtReparentTo(rNode)
+        self.rDoor = rNode
         
         self.spaceGui.load(self.notebook)
         self.nameGui = aspect2dp.attachNewNode("MAT_NameGUI")
         self.namePanel = OnscreenImage(
             image = loader.loadTexture("stage_3/maps/t2_gu_mat_nameInput.png"),
             parent = self.nameGui,
-            scale = (0.8,1,0.18)
+            scale = (0.96,0,0.5)
         )
         self.namePanel.setTransparency(TransparencyAttrib.MAlpha)
         self.namePTitle = OnscreenText(text = TTLocalizer.TypeYourName,
@@ -81,20 +89,21 @@ class MakeAToon(FSM):
             relief = DGG.SUNKEN,
             text_align = TextNode.ACenter,
             borderWidth=(0.01, 0.01),
-            frameColor = Vec4(1),
+            frameColor = Vec4(0),
             pos = (0,0,-0.07),
             command = self.__handleNameDone
         )
         self.nameInput.reparentTo(self.nameGui, 1000)
         self.submitButton = DirectButton(image=loader.loadTexture("stage_3/maps/t2_gui_confirm.png"),
             scale = .1,
-            pos=(0.75,0,-0.18),
+            pos=(0.8,0,-0.2),
             relief=None,
             command=self.__handleNameDone
         )
         self.submitButton.setTransparency(TransparencyAttrib.MAlpha)
         self.submitButton.reparentTo(self.nameGui, 1000)
         self.nameGui.stash()
+        self.stageTitle = OnscreenText(mayChange=1, font=ToontownGlobals.getMickeyFont(), pos=(0,0.9), fg=(1,1,0,1), scale=.12)
         self.decompressSfx = loader.loadSfx('phase_9/audio/sfx/toon_decompress.mp3')
         self.walkSound = loader.loadSfx("phase_3.5/audio/sfx/AV_footstep_walkloop.wav")
         self.walkSound.setLoop(1)
@@ -164,6 +173,7 @@ class MakeAToon(FSM):
         
     def enterPickBody(self):
         self.currentStage = self.Stages.index("PickBody")
+        self.stageTitle.setText(TTLocalizer.ChooseYourToon)
         self.spaceGui.request("BodyGUI")
         self.cameraWork.request("BodyPickCamera")
         
@@ -178,6 +188,7 @@ class MakeAToon(FSM):
             
     def enterPickColor(self):
         self.currentStage = self.Stages.index("PickColor")
+        self.stageTitle.setText(TTLocalizer.ChooseYourColor)
         self.spaceGui.request("ColorGUI")
         
     def __prepareSquishToon(self):
@@ -223,6 +234,7 @@ class MakeAToon(FSM):
     def enterBirthMovie(self):
         self.currentStage = self.Stages.index("BirthMovie")
         self.spaceGui.request("Clean")
+        self.stageTitle.setText("")
         self.toon.loop("jump-idle", toFrame=22)
         self.tableShakeIv = Sequence(
             self.table.hprInterval(0.2, (204.62, 0, 0)),
@@ -247,13 +259,33 @@ class MakeAToon(FSM):
             self.cameraWork.request("ClothesCamera")
         else:
             self.ccCamDone()
+            
+    def openCloset(self):
+        openIv = Parallel(
+            self.rDoor.hprInterval(0.5, (110,0,0)),
+            self.lDoor.hprInterval(0.5, (-110,0,0))
+        )
+        openIv.start()
+        
+    def closeCloset(self):
+        closeIv = Parallel(
+            self.rDoor.hprInterval(0.5, (0,0,0)),
+            self.lDoor.hprInterval(0.5, (0,0,0))
+        )
+        closeIv.start()
         
     def ccCamDone(self):
+        self.openCloset()
+        self.stageTitle.setText(TTLocalizer.ChooseYourClothes)
         self.spaceGui.request("Clothes")
+        
+    def exitSetClothes(self):
+        self.closeCloset()
         
     def enterSetName(self):
         self.currentStage = self.Stages.index("SetName")
         self.spaceGui.request("Clean")
+        self.stageTitle.setText("")
         self.spaceGui.backButton.show()
         self.nameGui.unstash()
         
@@ -263,7 +295,17 @@ class MakeAToon(FSM):
     def __handleNameDone(self, name = None):
         if not name:
             name = self.nameInput.get()
-        messenger.send(self.doneEvent, [self.slot, name, self.toon.style])
+        self.request("Teleport")
+        
+    def enterTeleport(self):
+        self.spaceGui.request("Clean")
+        self.cameraWork.request("FadeOffCamera")
+        self.toon.animFSM.request("TeleportOut")
+        base.transitions.fadeOut(5)
+    #messenger.send(self.doneEvent, [self.slot, name, self.toon.style])
+    
+    def foCamDone(self):
+        self.exit()
 
     def exit(self):
         base.audioManager.stopMusic()
