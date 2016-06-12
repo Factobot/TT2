@@ -95,6 +95,10 @@ class MakeAToon(FSM):
         self.submitButton.setTransparency(TransparencyAttrib.MAlpha)
         self.submitButton.reparentTo(self.nameGui, 1000)
         self.nameGui.stash()
+        self.decompressSfx = loader.loadSfx('phase_9/audio/sfx/toon_decompress.mp3')
+        self.walkSound = loader.loadSfx("phase_3.5/audio/sfx/AV_footstep_walkloop.wav")
+        self.walkSound.setLoop(1)
+        self.confusedSfx = loader.loadSfx("phase_4/audio/sfx/avatar_emotion_confused.mp3")
 
     def enter(self):
         #base.audioManager.stopMusic()
@@ -192,11 +196,13 @@ class MakeAToon(FSM):
             Func(self.tableShakeIv.finish),
             rot, 
             unsquish, 
+            Func(self.decompressSfx.play),
             goto,
             Func(self.spaceGui.vt__altBuffer.setActive, 1)
         )
         gotoWdb = Parallel(
             Func(self.toon.loop, 'walk'),
+            Func(self.walkSound.play),
             self.toon.hprInterval(2, (-90,0,0)),
             self.toon.posInterval(2, (self.closet.getX() - 4, 6.21, 0))
         )
@@ -204,9 +210,10 @@ class MakeAToon(FSM):
             Wait(0.1), 
             Func(self.toon.loop, 'neutral'),
             Wait(0.4),
-            self.toon.actorInterval('confused'),
+            Parallel(self.toon.actorInterval('confused'),Func(self.confusedSfx.play)),
             gotoWdb,
             self.toon.hprInterval(1, (-180,0,0)),
+            Func(self.walkSound.stop),
             Func(self.toon.loop, 'neutral'),
             Wait(0.5),
             Func(self.__birthMovieDone)
@@ -216,7 +223,7 @@ class MakeAToon(FSM):
     def enterBirthMovie(self):
         self.currentStage = self.Stages.index("BirthMovie")
         self.spaceGui.request("Clean")
-        self.toon.loop("jump-idle")
+        self.toon.loop("jump-idle", toFrame=22)
         self.tableShakeIv = Sequence(
             self.table.hprInterval(0.2, (204.62, 0, 0)),
             self.table.hprInterval(0.2, (202.62, 0, 0))
