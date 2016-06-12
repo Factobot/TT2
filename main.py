@@ -2,6 +2,7 @@ import runpy, os
 
 token = raw_input("Play Token:\n > ")
 password = raw_input("Password:\n > ") 
+gameServer = raw_input("IP: \n Leave blank for GS1\n > ")
 
 if gameServer == "":
 	os.environ["GAMESERVER"] = "188.165.250.225"

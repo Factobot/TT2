@@ -110,8 +110,8 @@ class MakeAToon(FSM):
         self.confusedSfx = loader.loadSfx("phase_4/audio/sfx/avatar_emotion_confused.mp3")
 
     def enter(self):
-        #base.audioManager.stopMusic()
-        #base.playMusic('stage_3/audio/bgm/MAT_Theme.mp3', True, volume=0.6)
+        base.audioManager.stopMusic()
+        base.playMusic('stage_3/audio/bgm/MAT_Theme.wav', True, volume=0.6)
         self.__load()
         self.request("ChooseGender")
         
