@@ -19,7 +19,8 @@ class PlayAssistant(FSM):
         self.controlManager = ToontownControlManager.ToontownControlManager()
         self.cameraDriver = InteractiveCameraDriver.InteractiveCameraDriver(base.camera)
         self.cTrav = CollisionTraverser('base.cTrav')
-        self.keyData = {"w":0, "a":0, "s":0, "d":0, "space":0}
+        self.keyData = {"w":0, "a":0, "s":0, "d":0, "space":0, "alt":0}
+        self.altPressed = False
         
     def setup(self):
         self.setupWalk()
@@ -41,6 +42,9 @@ class PlayAssistant(FSM):
         
     def setNormalSpeeds(self):
         self.controlManager.setSpeeds(ToontownGlobals.ToonForwardSpeed, ToontownGlobals.ToonJumpForce, ToontownGlobals.ToonReverseSpeed, ToontownGlobals.ToonRotateSpeed)
+
+    def setRunSpeeds(self):
+        self.controlManager.setSpeeds(ToontownGlobals.ToonForwardSpeed * 2, ToontownGlobals.ToonJumpForce, ToontownGlobals.ToonReverseSpeed, ToontownGlobals.ToonRotateSpeed)
         
     def enableInteractiveCamera(self):
         self.cameraDriver.setTarget(self.toon)
@@ -61,6 +65,8 @@ class PlayAssistant(FSM):
         self.accept("d-up", self.__toggleKey, ["d"])
         self.accept("space", self.__toggleKey, ["space"])
         self.accept("space-up", self.__toggleKey, ["space"])
+        self.accept("alt", self.__toggleAltKey)
+        self.accept("alt-up", self.__toggleAltKey)
         taskMgr.add(self.__watchKeyTask, "watch-key")
         
     def deactivateWalkAnimations(self):
@@ -74,6 +80,8 @@ class PlayAssistant(FSM):
         self.ignore("d-up")
         self.ignore("space")
         self.ignore("space-up")
+        self.ignore("alt")
+        self.ignore("alt-up")
         taskMgr.remove("watch-key")
         
     def __watchKeyTask(self, task):
@@ -97,6 +105,16 @@ class PlayAssistant(FSM):
         
     def __toggleKey(self, key):
         self.keyData[key] = not self.keyData[key]
+
+    def __toggleAltKey(self):
+        if not self.altPressed:
+            self.altPressed = True
+            self.setRunSpeeds()
+        else:
+            self.altPressed = False
+            self.setNormalSpeeds()
+
+        return
         
     def enterPlay(self):
         self.setNormalSpeeds()
