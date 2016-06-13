@@ -6,34 +6,58 @@ from toontown.toon.ToonDNA import ToonDNA
 from toontown.login import PickerGlobals
 
 class AvatarCreation(FSM):
-    def __init__(self, avMgr, accId, slot, name, dna):
+
+    defaultTransitions = {
+        'enterQueryAccount': [ 
+            'enterCreate'
+        ],
+        'enterCreate': [ 
+            'enterStore'
+        ],
+        'enterStore': [ 
+        ]
+    }
+
+    def __init__(self, avMgr, accId, slotId, name, dnaString):
+        FSM.__init__(self, 'AvatarCreation')
+        
         self.avMgr = avMgr
         self.accId = accId
-        self.slot = slot
+        self.slotId = slotId
         self.name = name
-        self.dna = dna
+        self.dnaString = dnaString
         
     def enterQueryAccount(self):
-        self.avMgr.air.dbInterface.queryObject(self.avMgr.air.dbId, self.accId, self.__handleQueryDone)
-        
+        self.avMgr.air.dbInterface.queryObject(databaseId=self.avMgr.air.dbId, 
+                                            doId=self.accId, 
+                                            callback=self.__handleQueryDone)
+    
     def connId(self, accId):
         return self.avMgr.GetAccountConnectionChannel(accId)
-        
+    
     def __handleQueryDone(self, dclass, fields):
-        if dcass != self.avMgr.air.dclassesByName['AccountManagerUD']:
+        print '__handleQueryDone', dclass, fields
+
+        if dclass != self.avMgr.air.dclassesByName['AccountManagerUD']:
             self.avMgr.dropConnection(self.connId(self.accId), "Unknown account")
             return
+
         self.accountData = fields
         self.avList = self.accountData['ACCOUNT_AVATARS']
-        if self.avList[self.slot]:
+
+        if self.avList[self.slotId]:
             self.avMgr.dropConnection(self.connId(self.accId), "Slot taken!")
             return
+
         self.request("Create")
         
     def enterCreate(self):
         fields = {
-            'setDNAString': self.dna
+            'setDNAString': (self.dnaString,),
+            'setName': (self.name,),
+            'setSlotId': (self.slotId,)
         }
+
         self.avMgr.air.dbInterface.createObject(
             self.avMgr.air.dbId,
             self.avMgr.air.dclassesByName['DistributedToonUD'],
@@ -45,6 +69,7 @@ class AvatarCreation(FSM):
         if not doId:
             self.avMgr.dropConnection(self.connId(self.accId), "Failed creating avatar!")
             return
+
         self.avId = doId
         self.request("Store")
         
@@ -63,10 +88,12 @@ class AvatarCreation(FSM):
         if fields:
             self.avMgr.dropConnection(self.connId(self.accId), "Failed associating avatar!")
             return
+
         self.avMgr.sendUpdateToAccountId(self.accId, 'createAvatarResponse', [self.avId])
 
 
 class AvatarManagerUD(FSM, DistributedObjectGlobalUD):
+
     def __init__(self, air):
         FSM.__init__(self, 'AvatarManager')
         DistributedObjectGlobalUD.__init__(self, air)
@@ -79,15 +106,17 @@ class AvatarManagerUD(FSM, DistributedObjectGlobalUD):
         self.air.send(dg)
         
     def requestCreateAvatar(self, slot, name, dna):
-        sender = self.getAvatarIdFromSender()
+        sender = self.air.getAvatarIdFromSender()
         if slot > PickerGlobals.NUM_TOONS:
             self.dropConnection(sender, 'Invalid slot given!')
             return
+        
         valid = ToonDNA().isValidNetString(dna)
         if not valid:
             self.dropConnection(sender, "Invalid DNA given!")
             return
-        accountId = self.getAccountIdFromSender()
+
+        accountId = self.air.getAccountIdFromSender()
         fsm = AvatarCreation(self, accountId, slot, name, dna)
         fsm.request('QueryAccount')
         

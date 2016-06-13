@@ -19,6 +19,7 @@ class MakeAToon(FSM):
         "SetClothes",
         "SetName"
     ]
+
     def __init__(self, slot, doneEvent):
         FSM.__init__(self, "MakeAToon")
         self.slot = slot
@@ -36,14 +37,16 @@ class MakeAToon(FSM):
     def __load(self):
         base.cam.setPosHpr(-11.59, -19.19, 5.31, 329.74, 350.54, 0.00)
         self.room = loader.loadModel("phase_3/models/makeatoon/tt_m_ara_mat_room")
-        remove = ["colorAll", "nameAll", "bodyAll", "cothAll", "camera_arrow", "spotlight", 
-        "genderProps"]
+        remove = ["colorAll", "nameAll", "bodyAll", "cothAll", "camera_arrow", "spotlight",  "genderProps"]
         for r in remove:
-            self.room.find("**/%s*" %r).removeNode()
+            self.room.find("**/%s*" % r).removeNode()
+
         self.room.reparentTo(render)
         self.room.setScale(1.3,1.4,1)
         
         self.toon = Toon()
+        self.toon.defaultCS = self.toon.getColorScale()
+        self.toon.setColorScale(Vec4(1.6, 1.6, 1.6, 0.9))
         
         self.table = loader.loadModel("stage_3/models/props/MAT_table")
         self.table.reparentTo(render)
@@ -173,7 +176,7 @@ class MakeAToon(FSM):
         
     def enterPickBody(self):
         self.currentStage = self.Stages.index("PickBody")
-        self.stageTitle.setText(TTLocalizer.ChooseYourToon)
+        self.stageTitle.setText(TTLocalizer.CustomizeYourToon)
         self.spaceGui.request("BodyGUI")
         self.cameraWork.request("BodyPickCamera")
         
@@ -203,6 +206,8 @@ class MakeAToon(FSM):
         unsquish = self.toon.scaleInterval(1, self.originalToonScale)
         goto = ProjectileInterval(self.toon, duration=1, endPos=(0, 6.21, 0))
         rot = self.toon.hprInterval(1, (-180,0,0))
+        self.toon.setColorScale(self.toon.defaultCS)
+        
         allPar = Parallel(Func(self.toon.show), 
             Func(self.tableShakeIv.finish),
             rot, 
@@ -295,6 +300,12 @@ class MakeAToon(FSM):
     def __handleNameDone(self, name = None):
         if not name:
             name = self.nameInput.get()
+
+        try:
+            self.name
+        except:
+            self.name = name
+        
         self.request("Teleport")
         
     def enterTeleport(self):
@@ -302,7 +313,7 @@ class MakeAToon(FSM):
         self.cameraWork.request("FadeOffCamera")
         self.toon.animFSM.request("TeleportOut")
         base.transitions.fadeOut(5)
-    #messenger.send(self.doneEvent, [self.slot, name, self.toon.style])
+        messenger.send(self.doneEvent, [self.slot, self.name, self.toon.style])
     
     def foCamDone(self):
         self.exit()

@@ -18,6 +18,8 @@ try:
     base.createToonBase()
 except:
     raise #Exception('Could not init createToonBase!')
+
+base.disableMouse()
     
 DirectGuiGlobals.setDefaultRolloverSound(base.loadSfx('phase_3/audio/sfx/GUI_rollover.mp3'))
 DirectGuiGlobals.setDefaultClickSound(base.loadSfx('stage_3/audio/sfx/GUI_click.ogg'))
