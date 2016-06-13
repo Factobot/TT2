@@ -19,6 +19,7 @@ class MakeAToon(FSM):
         "SetClothes",
         "SetName"
     ]
+
     def __init__(self, slot, doneEvent):
         FSM.__init__(self, "MakeAToon")
         self.slot = slot
@@ -173,7 +174,7 @@ class MakeAToon(FSM):
         
     def enterPickBody(self):
         self.currentStage = self.Stages.index("PickBody")
-        self.stageTitle.setText(TTLocalizer.ChooseYourToon)
+        self.stageTitle.setText(TTLocalizer.CustomizeYourToon)
         self.spaceGui.request("BodyGUI")
         self.cameraWork.request("BodyPickCamera")
         
@@ -295,6 +296,12 @@ class MakeAToon(FSM):
     def __handleNameDone(self, name = None):
         if not name:
             name = self.nameInput.get()
+
+        try:
+            self.name
+        except:
+            self.name = name
+        
         self.request("Teleport")
         
     def enterTeleport(self):
@@ -302,7 +309,7 @@ class MakeAToon(FSM):
         self.cameraWork.request("FadeOffCamera")
         self.toon.animFSM.request("TeleportOut")
         base.transitions.fadeOut(5)
-    #messenger.send(self.doneEvent, [self.slot, name, self.toon.style])
+        messenger.send(self.doneEvent, [self.slot, self.name, self.toon.style])
     
     def foCamDone(self):
         self.exit()

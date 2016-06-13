@@ -5,6 +5,7 @@ from toontown.distributed import GameGlobals
 
 class UberdogRepository(AstronInternalRepository):
     GameGlobalsId = GameGlobals.GameGlobalsId
+    dbId = 4003
     
     def __init__(self, dcFileNames, baseChannel, serverId):
         AstronInternalRepository.__init__(self, baseChannel, serverId, dcFileNames, dcSuffix='UD')

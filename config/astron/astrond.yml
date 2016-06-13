@@ -13,7 +13,7 @@ uberdogs:
     - class: AccountManager
       id: 1001
       anonymous: true
-      
+
     - class: AvatarManager
       id: 1002
       anonymous: false

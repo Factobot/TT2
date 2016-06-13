@@ -102,6 +102,9 @@ dclass DistributedAvatar : DistributedObject {
 
 dclass DistributedToon : DistributedAvatar, DistributedSmoothNode {
   setDNAString(blob) required broadcast ram db;
+  setName(string) required broadcast ram db;
+  setSlotId(uint8) required db;
+
   setAnimState(char [1-100]) broadcast ownsend ram airecv;
 };
 

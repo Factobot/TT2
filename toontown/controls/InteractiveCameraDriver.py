@@ -98,7 +98,7 @@ class InteractiveCameraDriver(DirectObject):
                 
                 heading = self.cameraParent.getH()
                 pitch = self.cameraParent.getP()
-                if base.win.movePointer(0, self.mouseCoords[0], self.mouseCoords[1]):
+                if base.win.movePointer(0, int(self.mouseCoords[0]), int(self.mouseCoords[1])):
                     heading -= (x - self.mouseCoords[0]) * InteractiveCameraDriver.CameraFactor
                     pitch -= (y - self.mouseCoords[1]) * InteractiveCameraDriver.CameraFactor
 

@@ -77,23 +77,25 @@ class AccountManagerUD(DistributedObjectGlobalUD):
         with open(self.dbStorageFilename, 'r') as store:
             jdata = json.load(store)
             store.close()
-            
-        jdata['Accounts'][self.token] = str(doId)
+        
+        newData = jdata
+        newData['Accounts'][self.token] = doId
 
         with open(self.dbStorageFilename, 'r+') as store:
-            store.write(json.dumps(jdata))
+            store.write(json.dumps(newData))
 
     def updateStoredAccount(self, token):
         with open(self.dbStorageFilename, 'r') as store:
             jdata = json.load(store)
             store.close()
 
+        doId = int(jdata['Accounts'][token])
         fields = {
             'ACCOUNT_LAST_LOGIN': strftime("%Y-%m-%d %H:%M:%S", gmtime())
         }
 
-        self.air.dbInterface.updateObject(self.dbId,
-                                        doId=jdata['Accounts'][token],
+        self.air.dbInterface.updateObject(databaseId=self.dbId,
+                                        doId=doId,
                                         dclass=self.air.dclassesByName['AccountManagerUD'],
                                         newFields=fields,
                                         callback=self._updatedStoredAccount)
