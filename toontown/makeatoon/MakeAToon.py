@@ -133,19 +133,27 @@ class MakeAToon(FSM):
         self.genderDialog.confirmButton.hide()
         boyButton = DirectButton(
             image = loader.loadTexture("stage_3/maps/t2_gui_boyChoice.png"),
-            scale = (0.2,1,0.3),
-            pos = (0.2,0,0),
+            scale = (0.3,1,0.4),
+            pos = (-0.25,0,0),
             relief = None,
             parent = self.genderDialog.background,
+            text = ("",TTLocalizer.ToonMale),
+            text_font = ToontownGlobals.getToonFont(),
+            text_scale = 0.5,
+            text_pos = (0,-1.2),
             command = self.__handleGenderDone,
             extraArgs = ["m"]
         )
         girlButton = DirectButton(
             image = loader.loadTexture("stage_3/maps/t2_gui_girlChoice.png"),
-            scale = (0.2,1,0.3),
-            pos = (-0.2,0,0),
+            scale = (0.3,1,0.4),
+            pos = (0.25,0,0),
             relief = None,
             parent = self.genderDialog.background,
+            text = ("",TTLocalizer.ToonFemale),
+            text_font = ToontownGlobals.getToonFont(),
+            text_scale = 0.5,
+            text_pos = (0,-1.2),
             command = self.__handleGenderDone,
             extraArgs = ["f"]
         )
