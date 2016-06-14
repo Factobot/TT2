@@ -22,14 +22,13 @@ class MakeAToon(FSM):
 
     def __init__(self, slot, doneEvent):
         FSM.__init__(self, "MakeAToon")
-        
+
         self.slot = slot
         self.doneEvent = doneEvent
         self.currentStage = -1
         self.spaceGui = MakeAToonSpaceGUI(self)
         self.cameraWork = MakeAToonCamera(self)
         self.toon = None
-        self.toonName = None
         
     def skipMakeAToon(self):
         name = 'Skid'
