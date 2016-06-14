@@ -37,7 +37,7 @@ class AvatarCreation(FSM):
                 self.avMgr.dropConnection(self.connId(self.accId), "Slot taken!")
                 return
 
-        self.forceTransition("Create")
+        self.request("Create")
         
     def enterCreate(self):
         fields = {
@@ -59,7 +59,7 @@ class AvatarCreation(FSM):
             return
 
         self.avId = doId
-        self.forceTransition("Store")
+        self.request("Store")
         
     def enterStore(self):
         self.avList[self.slotId] = self.avId
@@ -67,15 +67,8 @@ class AvatarCreation(FSM):
             self.avMgr.air.dbId,
             self.accId,
             self.avMgr.air.dclassesByName['AccountManagerUD'],
-            {'ACCOUNT_AVATARS': self.avList},
-            {'ACCOUNT_AVATARS': self.accountData['ACCOUNT_AVATARS']},
-            self.__handleStoreDone
+            {'ACCOUNT_AVATARS': self.avList}
         )
-        
-    def __handleStoreDone(self, fields):
-        if fields:
-            self.avMgr.dropConnection(self.connId(self.accId), "Failed associating avatar!")
-            return
 
         self.avMgr.sendUpdateToAccountId(self.accId, 'createAvatarResponse', [self.avId])
 
