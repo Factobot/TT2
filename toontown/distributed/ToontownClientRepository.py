@@ -99,7 +99,6 @@ class ToontownClientRepository(ClientRepositoryBase, FSM):
 
     def _handleLoginResp(self, avList):
         self.uberdogHandle = self.addInterest(self.GameGlobalsId, 0, 'uberdogHandle', 'uberdogHandleDone')
-        # TODO: Check for an AI shard object!
         self.acceptOnce('uberdogHandleDone', self._handleUberdogResp, [avList])
 
     def _handleUberdogResp(self, avList):

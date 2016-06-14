@@ -57,7 +57,7 @@ class AccountManagerUD(DistributedObjectGlobalUD):
 
     def createNewAccount(self, token, password):
         fields = {
-            'ACCOUNT_AVATARS': [],
+            'ACCOUNT_AVATARS': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             'ACCOUNT_USERNAME': token,
             'ACCOUNT_PASSWORD': password,
             'ACCOUNT_TIME_CREATED': strftime("%Y-%m-%d %H:%M:%S", gmtime()),
@@ -115,21 +115,14 @@ class AccountManagerUD(DistributedObjectGlobalUD):
 
         if len(avatarList) > 0:
             for av in avatarList:
-                self._activateSender(self.playToken2connection[self.token], avatar=av) # TODO!
+                if av != 0:
+                    self._activateSender(self.playToken2connection[self.token], avatar=av) # TODO!
         else:
             self._activateSender(self.playToken2connection[self.token], avatar=[])
-
-        return None
 
     def _activateSender(self, channel, avatar):
         target = self.playToken2connection[self.token]
         self.accountId2connection[channel] = target
-
-        datagram = PyDatagram()
-        datagram.addServerHeader(target, self.air.ourChannel, CLIENTAGENT_SET_STATE)
-        datagram.addUint16(1) # ANONYMOUS
-        self.air.send(datagram)
-        datagram.clear() # Cleanse data
 
         datagram = PyDatagram()
         datagram.addServerHeader(target, self.air.ourChannel, CLIENTAGENT_OPEN_CHANNEL)

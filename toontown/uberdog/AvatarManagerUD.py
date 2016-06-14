@@ -7,17 +7,6 @@ from toontown.login import PickerGlobals
 
 class AvatarCreation(FSM):
 
-    defaultTransitions = {
-        'enterQueryAccount': [ 
-            'enterCreate'
-        ],
-        'enterCreate': [ 
-            'enterStore'
-        ],
-        'enterStore': [ 
-        ]
-    }
-
     def __init__(self, avMgr, accId, slotId, name, dnaString):
         FSM.__init__(self, 'AvatarCreation')
         
@@ -36,8 +25,6 @@ class AvatarCreation(FSM):
         return self.avMgr.GetAccountConnectionChannel(accId)
     
     def __handleQueryDone(self, dclass, fields):
-        print '__handleQueryDone', dclass, fields
-
         if dclass != self.avMgr.air.dclassesByName['AccountManagerUD']:
             self.avMgr.dropConnection(self.connId(self.accId), "Unknown account")
             return
@@ -45,11 +32,12 @@ class AvatarCreation(FSM):
         self.accountData = fields
         self.avList = self.accountData['ACCOUNT_AVATARS']
 
-        if self.avList[self.slotId]:
-            self.avMgr.dropConnection(self.connId(self.accId), "Slot taken!")
-            return
+        if self.slotId in self.avList:
+            if self.slotId != 0:
+                self.avMgr.dropConnection(self.connId(self.accId), "Slot taken!")
+                return
 
-        self.request("Create")
+        self.forceTransition("Create")
         
     def enterCreate(self):
         fields = {
@@ -67,14 +55,14 @@ class AvatarCreation(FSM):
         
     def __handleAvatarCreated(self, doId):
         if not doId:
-            self.avMgr.dropConnection(self.connId(self.accId), "Failed creating avatar!")
+            self.avMgr.dropConnection(self.connId(self.accId), "Failed to create a new avatar!")
             return
 
         self.avId = doId
-        self.request("Store")
+        self.forceTransition("Store")
         
     def enterStore(self):
-        self.avList[self.slot] = self.avId
+        self.avList[self.slotId] = self.avId
         self.avMgr.air.dbInterface.updateObject(
             self.avMgr.air.dbId,
             self.accId,
@@ -105,10 +93,10 @@ class AvatarManagerUD(FSM, DistributedObjectGlobalUD):
         dg.addString(reason)
         self.air.send(dg)
         
-    def requestCreateAvatar(self, slot, name, dna):
+    def requestCreateAvatar(self, slotId, name, dna):
         sender = self.air.getAvatarIdFromSender()
-        if slot > PickerGlobals.NUM_TOONS:
-            self.dropConnection(sender, 'Invalid slot given!')
+        if slotId > PickerGlobals.NUM_TOONS:
+            self.dropConnection(sender, 'Invalid slotId given!')
             return
         
         valid = ToonDNA().isValidNetString(dna)
@@ -117,7 +105,7 @@ class AvatarManagerUD(FSM, DistributedObjectGlobalUD):
             return
 
         accountId = self.air.getAccountIdFromSender()
-        fsm = AvatarCreation(self, accountId, slot, name, dna)
+        fsm = AvatarCreation(self, accountId, slotId, name, dna)
         fsm.request('QueryAccount')
         
         

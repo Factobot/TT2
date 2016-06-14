@@ -22,12 +22,14 @@ class MakeAToon(FSM):
 
     def __init__(self, slot, doneEvent):
         FSM.__init__(self, "MakeAToon")
+        
         self.slot = slot
         self.doneEvent = doneEvent
         self.currentStage = -1
         self.spaceGui = MakeAToonSpaceGUI(self)
         self.cameraWork = MakeAToonCamera(self)
         self.toon = None
+        self.toonName = None
         
     def skipMakeAToon(self):
         name = 'Skid'
@@ -45,6 +47,7 @@ class MakeAToon(FSM):
         self.room.setScale(1.3,1.4,1)
         
         self.toon = Toon()
+        self.toon.name = None
         self.toon.defaultCS = self.toon.getColorScale()
         self.toon.setColorScale(Vec4(1.6, 1.6, 1.6, 0.9))
         
@@ -309,10 +312,11 @@ class MakeAToon(FSM):
         if not name:
             name = self.nameInput.get()
 
-        try:
-            self.name
-        except:
-            self.name = name
+        if len(name) == 0:
+            return
+
+        if not self.toon.name:
+            self.toon.name = name
         
         self.request("Teleport")
         
@@ -321,7 +325,7 @@ class MakeAToon(FSM):
         self.cameraWork.request("FadeOffCamera")
         self.toon.animFSM.request("TeleportOut")
         base.transitions.fadeOut(5)
-        messenger.send(self.doneEvent, [self.slot, self.name, self.toon.style])
+        messenger.send(self.doneEvent, [self.slot, self.toon.name, self.toon.style])
     
     def foCamDone(self):
         self.exit()
