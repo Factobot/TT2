@@ -324,16 +324,15 @@ class MakeAToon(FSM):
         self.cameraWork.request("FadeOffCamera")
         self.toon.animFSM.request("TeleportOut")
         base.transitions.fadeOut(5)
-        messenger.send(self.doneEvent, [self.slot, self.toon.name, self.toon.style])
     
     def foCamDone(self):
-        self.exit()
+        messenger.send(self.doneEvent, [self.slot, self.toon.name, self.toon.style])
 
     def exit(self):
         base.audioManager.stopMusic()
         base.cam.setPosHpr(0,0,0,0,0,0)
         self.room.removeNode()
-        self.toon.remove()
+        self.toon.cleanup()
         self.table.removeNode()
         self.notebook.removeNode()
         self.closet.removeNode()

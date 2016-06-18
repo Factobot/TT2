@@ -7,8 +7,11 @@ from direct.distributed.MsgTypes import *
 from direct.interval.IntervalGlobal import *
 from toontown.login.ToonPicker import ToonPicker
 from toontown.makeatoon.MakeAToon import MakeAToon
-from toontown.distributed.GameGlobals import *
+from toontown.distributed import GameGlobals
 from toontown.distributed.PotentialToon import PotentialToon
+from toontown.toon.LocalPlayer import LocalPlayer
+
+import random
 
 class ToontownClientRepository(ClientRepositoryBase, FSM):
     notify = directNotify.newCategory("ToontownClientRepository")
@@ -40,7 +43,9 @@ class ToontownClientRepository(ClientRepositoryBase, FSM):
             'enterWaitSetAvatar'
         ],
         'enterWaitSetAvatar': [
-            
+            'enterPlay'
+        ],
+        'enterPlay': [
         ]
     }
 
@@ -51,8 +56,8 @@ class ToontownClientRepository(ClientRepositoryBase, FSM):
         self.serverVersion = serverVersion
         self.serverList = serverList
         self.accountDetails = accountDetails
-        self.accountManager = self.generateGlobalObject(self.DO_ID_ACCOUNT_MANAGER, 'AccountManager')
-        self.avatarManager = self.generateGlobalObject(self.DO_ID_AVATAR_MANAGER, 'AvatarManager')
+        self.accountManager = self.generateGlobalObject(GameGlobals.DO_ID_ACCOUNT_MANAGER, 'AccountManager')
+        self.avatarManager = self.generateGlobalObject(GameGlobals.DO_ID_AVATAR_MANAGER, 'AvatarManager')
         self.listShardMap = { }
 
     def getPlayToken(self):
@@ -149,28 +154,44 @@ class ToontownClientRepository(ClientRepositoryBase, FSM):
         self.accept('AvatarManager__AvatarCreationDone', self.__handleDBCreationDone)
         
     def __handleDBCreationDone(self, avId):
-        potToon = PotentialToon(avId)
-        self.request('WaitSetAvatar', [potToon])
+        self.forceTransition('WaitSetAvatar', avId)
         
-    def enterWaitSetAvatar(self, potAv):
-        self.avData = potAv
-        self.sendSetAvatarId(potAv.doId)
+    def enterWaitSetAvatar(self, avId):
+        self.sendSetAvatarId(avId)
         
     def sendSetAvatarId(self, avId):
-        self.avMgr.sendChooseAvatar(avId)
+        self.avatarManager.sendChooseAvatar(avId)
         
     def handleAvatarResponseMsg(self, avId, di):
-        print avId, di
+        dclass = self.dclassesByName['DistributedToon']
+        localAvatar = LocalPlayer(self)
+        localAvatar.dclass = dclass
+        base.localAvatar = localAvatar
+        localAvatar.doId = avId
+        self.localAvatarDoId = avId
+        parentId = None
+        zoneId = None
+        localAvatar.setLocation(parentId, zoneId)
+        localAvatar.generateInit()
+        localAvatar.generate()
+        dclass.receiveUpdateBroadcastRequiredOwner(localAvatar, di)
+        localAvatar.announceGenerate()
+        localAvatar.postGenerateMessage()
+        self.doId2do[avId] = localAvatar
+        self.forceTransition("Play")
         
-    def handleGenerateWithRequiredOtherOwner(self, di):
-        print 'bov'
-        if self.getCurrentState().getName() == 'WaitSetAvatar':
-            print 'ov'
-            doId = di.getUint32()
-            parentId = di.getUint32()
-            zoneId = di.getUint32()
-            dclassId = di.getUint16()
-            self.handleAvatarResponseMsg(doId, di)
+    def getStartDistrict(self):
+        return random.choice(self.listShardMap.keys())
+        
+    def enterPlay(self):
+        shard = self.getStartDistrict()
+        zoneId = 1000 #todo: save last zone
+        base.localAvatar.setLocation(shard, zoneId)
+        self.uberZoneInterest = self.addInterest(shard, OTPGlobals.UberZone, 'uberZone', 'uberZoneInterestComplete')
+        self.acceptOnce('uberZoneInterestComplete', self.uberZoneInterestComplete)
+        
+    def uberZoneInterestComplete(self):
+        pass
     
     def handleDatagram(self, di):
         self.handleMessageType(di, self.getMsgType())
@@ -223,6 +244,8 @@ class ToontownClientRepository(ClientRepositoryBase, FSM):
         dclass.startGenerate()
         distObj = self.generateWithRequiredOtherFieldsOwner(dclass, doId, di)
         dclass.stopGenerate()
+        
+        self.handleAvatarResponseMsg(doId, di)
 
     def gotInterestDoneMessage(self, di):
         if self.deferredGenerates:

@@ -29,51 +29,47 @@ dclass TimeManager: DistributedObject {
   serverTime(uint8 context, int32 timestamp);
 };
 
-dclass DistributedNode: DistributedObject {
-  setX(int16 / 10) broadcast ram;
-  setY(int16 / 10) broadcast ram;
-  setZ(int16 / 10) broadcast ram;
-  setH(int16 % 360 / 10) broadcast ram;
-  setP(int16 % 360 / 10) broadcast ram;
-  setR(int16 % 360 / 10) broadcast ram;
-  setPos: setX, setY, setZ;
-  setHpr: setH, setP, setR;
-  setPosHpr: setX, setY, setZ, setH, setP, setR;
-  setXY: setX, setY;
-  setXZ: setX, setZ;
-  setXYH: setX, setY, setH;
-  setXYZH: setX, setY, setZ, setH;
+dclass DistributedNode : DistributedObject {
+  setParentStr(blob) broadcast ram ownsend airecv;
+  setParent(uint32) broadcast ram ownsend airecv;
+  setX(int16/10) broadcast ram ownsend airecv;
+  setY(int16/10) broadcast ram ownsend airecv;
+  setZ(int16/10) broadcast ram ownsend airecv;
+  setH(int16%360/10) broadcast ram ownsend airecv;
+  setP(int16%360/10) broadcast ram ownsend airecv;
+  setR(int16%360/10) broadcast ram ownsend airecv;
+  setPos : setX, setY, setZ;
+  setHpr : setH, setP, setR;
+  setPosHpr : setX, setY, setZ, setH, setP, setR;
+  setXY : setX, setY;
+  setXZ : setX, setZ;
+  setXYH : setX, setY, setH;
+  setXYZH : setX, setY, setZ, setH;
 };
 
-dclass DistributedSmoothNode: DistributedNode {
-  setComponentL(uint64) broadcast ram;
-  setComponentX(int16 / 10) broadcast ram;
-  setComponentY(int16 / 10) broadcast ram;
-  setComponentZ(int16 / 10) broadcast ram;
-  setComponentH(int16 % 360 / 10) broadcast ram;
-  setComponentP(int16 % 360 / 10) broadcast ram;
-  setComponentR(int16 % 360 / 10) broadcast ram;
-  setComponentT(int16 timestamp) broadcast ram;
-  setSmStop: setComponentT;
-  setSmH: setComponentH, setComponentT;
-  setSmZ: setComponentZ, setComponentT;
-  setSmXY: setComponentX, setComponentY, setComponentT;
-  setSmXZ: setComponentX, setComponentZ, setComponentT;
-  setSmPos: setComponentX, setComponentY, setComponentZ, setComponentT;
-  setSmHpr: setComponentH, setComponentP, setComponentR, setComponentT;
-  setSmXYH: setComponentX, setComponentY, setComponentH, setComponentT;
-  setSmXYZH: setComponentX, setComponentY, setComponentZ, setComponentH, setComponentT;
-  setSmPosHpr: setComponentX, setComponentY, setComponentZ, setComponentH, setComponentP, setComponentR, setComponentT;
-  setSmPosHprL: setComponentL, setComponentX, setComponentY, setComponentZ, setComponentH, setComponentP, setComponentR, setComponentT;
-
-  clearSmoothing(int8 bogus) broadcast;
-
-  suggestResync(uint32 avId, int16 timestampA, int16 timestampB,
-                int32 serverTimeSec, uint16 serverTimeUSec,
-                uint16 / 100 uncertainty);
-  returnResync(uint32 avId, int16 timestampB,
-               int32 serverTimeSec, uint16 serverTimeUSec,
-               uint16 / 100 uncertainty);
+dclass DistributedSmoothNode : DistributedNode {
+  setComponentL(uint64) broadcast ram ownsend airecv;
+  setComponentX(int16/10) broadcast ram ownsend airecv;
+  setComponentY(int16/10) broadcast ram ownsend airecv;
+  setComponentZ(int16/10) broadcast ram ownsend airecv;
+  setComponentH(int16%360/10) broadcast ram ownsend airecv;
+  setComponentP(int16%360/10) broadcast ram ownsend airecv;
+  setComponentR(int16%360/10) broadcast ram ownsend airecv;
+  setComponentT(int16) broadcast ram ownsend airecv;
+  setSmStop : setComponentT;
+  setSmH : setComponentH, setComponentT;
+  setSmZ : setComponentZ, setComponentT;
+  setSmXY : setComponentX, setComponentY, setComponentT;
+  setSmXZ : setComponentX, setComponentZ, setComponentT;
+  setSmPos : setComponentX, setComponentY, setComponentZ, setComponentT;
+  setSmHpr : setComponentH, setComponentP, setComponentR, setComponentT;
+  setSmXYH : setComponentX, setComponentY, setComponentH, setComponentT;
+  setSmXYZH : setComponentX, setComponentY, setComponentZ, setComponentH, setComponentT;
+  setSmPosHpr : setComponentX, setComponentY, setComponentZ, setComponentH, setComponentP, setComponentR, setComponentT;
+  setSmPosHprL : setComponentL, setComponentX, setComponentY, setComponentZ, setComponentH, setComponentP, setComponentR, setComponentT;
+  clearSmoothing(int8) broadcast ownsend;
+  suggestResync(uint32, int16, int16, int32, uint16, uint16/100) ownrecv clsend;
+  returnResync(uint32, int16, int32, uint16, uint16/100) ownrecv clsend;
 };
 
 dclass DistributedObjectGlobal: DistributedObject {
