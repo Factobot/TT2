@@ -92,7 +92,7 @@ dclass AccountManager: DistributedObjectGlobal {
 
   uint32[] ACCOUNT_AVATARS required db;
   string ACCOUNT_USERNAME required db;
-  string ACCOUNT_PASSWORD required db;
+  //string ACCOUNT_PASSWORD required db;
   string ACCOUNT_TIME_CREATED required db;
   string ACCOUNT_LAST_LOGIN required db;
 };

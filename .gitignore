@@ -1,5 +1,5 @@
 *.py[co]
 *.stg
-*.yaml
+1*.yaml
 *.log
 *.json
