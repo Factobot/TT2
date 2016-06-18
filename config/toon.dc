@@ -6,7 +6,7 @@ from direct.distributed import DistributedObjectGlobal/AI/UD
 from toontown.uberdog import AccountManager/UD
 from toontown.ai import DistributedDistrict/AI
 from toontown.avatar import DistributedAvatar/AI
-from toontown.toon import DistributedToon/AI/UD
+from toontown.toon import DistributedToon/AI/UD/OV
 from toontown.uberdog import AvatarManager/UD
 
 typedef uint8 bool;
