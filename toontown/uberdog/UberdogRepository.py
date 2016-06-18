@@ -23,7 +23,7 @@ class UberdogRepository(AstronInternalRepository):
 
     def generateRoot(self):
         self.rootObject = DistributedObjectAI(self)
-        self.rootObject.generateWithRequiredAndId(self.getGameDoId(), self.GameGlobalsId, 0)
+        self.rootObject.generateWithRequiredAndId(self.getGameDoId(), GameGlobals.GameGlobalsId, 0)
     
     def generateGlobals(self):
         self.accountManager = self.generateGlobalObject(GameGlobals.DO_ID_ACCOUNT_MANAGER, 'AccountManager')

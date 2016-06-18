@@ -12,4 +12,4 @@ class AvatarManager(DistributedObjectGlobal):
         messenger.send("AvatarManager__AvatarCreationDone", [avId])
         
     def sendChooseAvatar(self, avId):
-        pass
+        self.sendUpdate("chooseAvatar", [avId])

@@ -7,7 +7,7 @@ from direct.distributed.MsgTypes import *
 from direct.interval.IntervalGlobal import *
 from toontown.login.ToonPicker import ToonPicker
 from toontown.makeatoon.MakeAToon import MakeAToon
-from toontown.distributed import GameGlobals
+from toontown.distributed.GameGlobals import *
 from toontown.distributed.PotentialToon import PotentialToon
 
 class ToontownClientRepository(ClientRepositoryBase, FSM):
@@ -51,8 +51,8 @@ class ToontownClientRepository(ClientRepositoryBase, FSM):
         self.serverVersion = serverVersion
         self.serverList = serverList
         self.accountDetails = accountDetails
-        self.accountManager = self.generateGlobalObject(GameGlobals.DO_ID_ACCOUNT_MANAGER, 'AccountManager')
-        self.avatarManager = self.generateGlobalObject(GameGlobals.DO_ID_AVATAR_MANAGER, 'AvatarManager')
+        self.accountManager = self.generateGlobalObject(self.DO_ID_ACCOUNT_MANAGER, 'AccountManager')
+        self.avatarManager = self.generateGlobalObject(self.DO_ID_AVATAR_MANAGER, 'AvatarManager')
         self.listShardMap = { }
 
     def getPlayToken(self):
@@ -158,6 +158,19 @@ class ToontownClientRepository(ClientRepositoryBase, FSM):
         
     def sendSetAvatarId(self, avId):
         self.avMgr.sendChooseAvatar(avId)
+        
+    def handleAvatarResponseMsg(self, avId, di):
+        print avId, di
+        
+    def handleGenerateWithRequiredOtherOwner(self, di):
+        print 'bov'
+        if self.getCurrentState().getName() == 'WaitSetAvatar':
+            print 'ov'
+            doId = di.getUint32()
+            parentId = di.getUint32()
+            zoneId = di.getUint32()
+            dclassId = di.getUint16()
+            self.handleAvatarResponseMsg(doId, di)
     
     def handleDatagram(self, di):
         self.handleMessageType(di, self.getMsgType())

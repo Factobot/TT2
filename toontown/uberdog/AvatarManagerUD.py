@@ -5,57 +5,66 @@ from direct.fsm.FSM import *
 from toontown.toon.ToonDNA import ToonDNA
 from toontown.login import PickerGlobals
 
-class AvatarCreation(FSM):
-
+class Operation(FSM):
     def __init__(self, avMgr, accId, slotId, name, dnaString):
-        FSM.__init__(self, 'AvatarCreation')
-        
+        FSM.__init__(self, self.__class__.__name__)
         self.avMgr = avMgr
+        self.air = self.avMgr.air
         self.accId = accId
         self.slotId = slotId
         self.name = name
         self.dnaString = dnaString
         
-    def enterQueryAccount(self):
-        self.avMgr.air.dbInterface.queryObject(databaseId=self.avMgr.air.dbId, 
-                                            doId=self.accId, 
-                                            callback=self.__handleQueryDone)
-    
     def connId(self, accId):
         return self.avMgr.GetAccountConnectionChannel(accId)
-    
+        
+    def enterOff(self):
+        del self.conn2operation[self.accId]
+        
+    def enterQueryAccount(self):
+        self.air.dbInterface.queryObject(databaseId=self.air.dbId, 
+                                            doId=self.accId, 
+                                            callback=self.__handleQueryDone)
+                                            
     def __handleQueryDone(self, dclass, fields):
         if dclass != self.avMgr.air.dclassesByName['AccountManagerUD']:
-            self.avMgr.dropConnection(self.connId(self.accId), "Unknown account")
+            self.killConnection("Unknown account")
             return
 
         self.accountData = fields
         self.avList = self.accountData['ACCOUNT_AVATARS']
+        self.handleQueryDone()
 
-        if self.slotId in self.avList:
-            if self.slotId != 0:
-                self.avMgr.dropConnection(self.connId(self.accId), "Slot taken!")
-                return
-
-        self.request("Create")
+class AvatarCreation(Operation):
         
-    def enterCreate(self):
+    def killConnection(self, reason):
+        self.avMgr.dropConnection(self.connId(self.accId), reason)
+        self.demand("Off")
+    
+    def handleQueryDone(self):
+        if self.avList[self.slotId] != 0:
+            self.killConnection("Attempted to create toon in occupied slot.")
+            return
+
+        self.request("CreateToon")
+        
+    def enterCreateToon(self):
         fields = {
             'setDNAString': (self.dnaString,),
             'setName': (self.name,),
             'setSlotId': (self.slotId,)
         }
 
-        self.avMgr.air.dbInterface.createObject(
-            self.avMgr.air.dbId,
-            self.avMgr.air.dclassesByName['DistributedToonUD'],
+        self.air.dbInterface.createObject(
+            self.air.dbId,
+            self.air.dclassesByName['DistributedToonUD'],
             fields,
             self.__handleAvatarCreated
         )
         
     def __handleAvatarCreated(self, doId):
         if not doId:
-            self.avMgr.dropConnection(self.connId(self.accId), "Failed to create a new avatar!")
+            self.killConnection("Failed to create a new avatar!")
             return
 
         self.avId = doId
@@ -63,14 +72,68 @@ class AvatarCreation(FSM):
         
     def enterStore(self):
         self.avList[self.slotId] = self.avId
-        self.avMgr.air.dbInterface.updateObject(
-            self.avMgr.air.dbId,
+        self.air.dbInterface.updateObject(
+            self.air.dbId,
             self.accId,
             self.avMgr.air.dclassesByName['AccountManagerUD'],
-            {'ACCOUNT_AVATARS': self.avList}
+            {'ACCOUNT_AVATARS': self.avList},
+            {'ACCOUNT_AVATARS': self.accountData["ACCOUNT_AVATARS"]},
+            self.__handleStoreDone
         )
 
+    def __handleStoreDone(self):
         self.avMgr.sendUpdateToAccountId(self.accId, 'createAvatarResponse', [self.avId])
+        self.demand("Off")
+        
+class AvatarLoading(Operation):
+    def handleQueryDone(self)
+        if self.avId not in self.avList:
+            self.killConnection("Tried to play avatar not in list,")
+            return
+        
+        self.demand("QueryAvatar")
+        
+    def enterQueryAvatar(self):
+        self.air.dbInterface.queryObject(self.air.dbId, self.avId, self.__handleAvatarResp)
+        
+    def __handleAvatar(self, dclass, fields):
+        if dclass != self.air.dclassesByName['DistributedToonUD']:
+            self.killConnection('Invalid avatar in account.')
+            return
+        
+        self.avatar = fields
+        self.demand('SetAvatar')
+        
+    def enterSetAvatar(self):
+        channel = self.avMgr.GetAccountConnectionChannel(self.connId(self.accId))
+
+        # If they disconnect during the operation, we give a post remove.
+        dgcleanup = PyDatagram()
+        dgcleanup.addServerHeader(self.avId, channel, STATESERVER_OBJECT_DELETE_RAM)
+        dgcleanup.addUint32(self.avId)
+        dg = PyDatagram()
+        dg.addServerHeader(channel, self.air.ourChannel, CLIENTAGENT_ADD_POST_REMOVE)
+        dg.addString(dgcleanup.getMessage())
+        self.csm.air.send(dg)
+
+        # Add to the avatar channel
+        dg = PyDatagram()
+        dg.addServerHeader(channel, self.air.ourChannel, CLIENTAGENT_OPEN_CHANNEL)
+        dg.addChannel(self.avMgr.GetPuppetConnectionChannel(self.avId))
+        self.csm.air.send(dg)
+
+        # Set sender channel to account too
+        dg = PyDatagram()
+        dg.addServerHeader(channel, self.air.ourChannel, CLIENTAGENT_SET_CLIENT_ID)
+        dg.addChannel(self.connId(self.accId)<<32 | self.avId)
+        self.csm.air.send(dg)
+
+        # Get control and finish.
+        dg = PyDatagram()
+        dg.addServerHeader(self.avId, self.air.ourChannel, STATESERVER_OBJECT_SET_OWNER)
+        dg.addChannel(self.connId(self.accId)<<32 | self.avId)
+        self.air.send(dg)
+        self.demand("Off")
 
 
 class AvatarManagerUD(FSM, DistributedObjectGlobalUD):
@@ -78,6 +141,7 @@ class AvatarManagerUD(FSM, DistributedObjectGlobalUD):
     def __init__(self, air):
         FSM.__init__(self, 'AvatarManager')
         DistributedObjectGlobalUD.__init__(self, air)
+        self.conn2operation = {}
         
     def dropConnection(self, connectionId, reason):
         dg = PyDatagram()
@@ -87,7 +151,7 @@ class AvatarManagerUD(FSM, DistributedObjectGlobalUD):
         self.air.send(dg)
         
     def requestCreateAvatar(self, slotId, name, dna):
-        sender = self.air.getAvatarIdFromSender()
+        sender = self.air.getMsgSender()
         if slotId > PickerGlobals.NUM_TOONS:
             self.dropConnection(sender, 'Invalid slotId given!')
             return
@@ -98,10 +162,18 @@ class AvatarManagerUD(FSM, DistributedObjectGlobalUD):
             return
 
         accountId = self.air.getAccountIdFromSender()
-        fsm = AvatarCreation(self, accountId, slotId, name, dna)
-        fsm.request('QueryAccount')
+        self.conn2operation[sender] = AvatarCreation(self, accountId, slotId, name, dna)
+        self.conn2operation[sender].request('QueryAccount')
         
+    def chooseAvatar(self, avId):
+        currentAvId = self.air.getAvatarIdFromSender()
+        accountId = self.air.getAccountIdFromSender()
+        sender = self.air.getMsgSender()
         
-        
-        
+        if currentAvId:
+            self.dropConnection(sender, 'A Toon is already chosen!')
+            return
+            
+        self.conn2operation[sender] = AvatarLoading(self, avId)
+        self.conn2operation[sender].request("QueryAccount")
         

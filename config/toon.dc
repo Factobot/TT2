@@ -117,4 +117,5 @@ dclass DistributedDistrict : DistributedObject {
 dclass AvatarManager : DistributedObjectGlobal {
   requestCreateAvatar(uint8, string, blob) clsend;
   createAvatarResponse(uint32);
+  chooseAvatar(uint32) clsend;
 }
