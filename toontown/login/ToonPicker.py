@@ -3,6 +3,7 @@ from panda3d.core import *
 from toontown.login.ToonPick import *
 from PickerGlobals import *
 from toontown.toonbase import TTLocalizer, ToontownGlobals
+from toontown.toon import Toon
 
 class ToonPicker:
 
@@ -20,7 +21,7 @@ class ToonPicker:
             pos = (0,0.9)
         )
         
-        self.title.reparentTo(aspect2dp, NO_FADE_SORT_INDEX)
+        self.title.reparentTo(aspect2dp)
         self.profileBg = OnscreenImage(
             image = loader.loadTexture("stage_3/maps/t2_gui_pat_profile.png"),
             pos = Vec3(0.9, 0, -0.1),
@@ -28,7 +29,7 @@ class ToonPicker:
         )
         
         self.profileBg.setTransparency(TransparencyAttrib.MAlpha)
-        self.profileBg.reparentTo(aspect2dp, NO_FADE_SORT_INDEX)
+        self.profileBg.reparentTo(aspect2dp)
         self.notChosen = OnscreenText(text=TTLocalizer.NoToonChosen,
             scale = (0.2),
             parent = self.profileBg,
@@ -45,11 +46,17 @@ class ToonPicker:
             self.picks.append(pick)
         
         for av in avList:
-            self.picks[av.slot].setToon(av)
+            if av.slot in range(0, NUM_TOONS):
+                self.picks[av.slot].setToon(av)
+            else:
+                print "Avatar with unrecognized slot %d" %av.slot
         
         for pick in self.picks:
             if pick.mode == MODE_NONE:
                 pick.setCreate()
+                
+        self.pToon = Toon.Toon()
+        self.pToon.reparentTo(self.profileBg)
         
         self.background.hide()
         self.profileBg.hide()
@@ -68,6 +75,9 @@ class ToonPicker:
         self.title.hide()
         for pick in self.picks:
             pick.destroy()
+            
+    def doPreview(self, toonDna):
+        self.pToon.setDNA(toonDna)
         
     def requestCreateAvatar(self, pick):
         messenger.send(self.doneEvent, [None, pick.slot, "create"])

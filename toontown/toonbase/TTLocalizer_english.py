@@ -10,6 +10,7 @@ Head = 'Head'
 Body = 'Body'
 Legs = 'Legs'
 Arms = 'Arms'
+Play = "Play"
 ChooseAName = "Type your Toon Name"
 AnimalToSpecies = {'dog': 'Dog',
  'cat': 'Cat',

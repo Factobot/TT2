@@ -174,6 +174,7 @@ class ToontownClientRepository(ClientRepositoryBase, FSM):
         localAvatar.setLocation(parentId, zoneId)
         localAvatar.generateInit()
         localAvatar.generate()
+        print di
         dclass.receiveUpdateBroadcastRequiredOwner(localAvatar, di)
         localAvatar.announceGenerate()
         localAvatar.postGenerateMessage()
@@ -240,10 +241,12 @@ class ToontownClientRepository(ClientRepositoryBase, FSM):
         zoneId = di.getUint32()
         classId = di.getUint16()
         
-        dclass = self.dclassesByNumber[classId]
-        dclass.startGenerate()
-        distObj = self.generateWithRequiredOtherFieldsOwner(dclass, doId, di)
-        dclass.stopGenerate()
+        #dclass = self.dclassesByNumber[classId]
+        #dclass.startGenerate()
+        #distObj = self.generateWithRequiredOtherFieldsOwner(dclass, doId, di)
+        #print dclass, distObj
+        #return
+        #dclass.stopGenerate()
         
         self.handleAvatarResponseMsg(doId, di)
 

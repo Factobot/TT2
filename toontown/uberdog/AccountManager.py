@@ -1,4 +1,5 @@
 from direct.distributed.DistributedObjectGlobal import DistributedObjectGlobal
+from toontown.distributed.PotentialToon import *
 
 class AccountManager(DistributedObjectGlobal):
 
@@ -8,10 +9,11 @@ class AccountManager(DistributedObjectGlobal):
     def requestLogin(self, token, password):
         self.sendUpdate('requestLogin', [token, password])
 
-    def recieveAvatar(self, avatar):
-        avList = [ ]
-
-        if len(avatar) > 0:
-            avList.append(avatar)
-
-        messenger.send('loginDone', [avList])
+    def recieveAvatar(self, avList):
+        avList = list(avList)
+        newAvList = []
+        for av in avList:
+            pot = PotentialToon(dna=av[0], name=av[1], slot=av[2])
+            newAvList.append(pot)
+            
+        messenger.send('loginDone', [newAvList])

@@ -3,6 +3,7 @@ from direct.interval.IntervalGlobal import *
 from panda3d.core import *
 from PickerGlobals import *
 from toontown.toonbase import ToontownGlobals, TTLocalizer
+from toontown.toon import ToonDNA, ToonHead, Toon
 import random
 
 class ToonPick:
@@ -11,6 +12,7 @@ class ToonPick:
         self.picker = picker
         self.slot = slot
         self.mode = MODE_NONE
+        self.headModel = None
         
     def hide(self):
         self.bubble.hide()
@@ -38,7 +40,7 @@ class ToonPick:
         self.bubble.bind(DGG.WITHIN, self.__hover)
         self.bubble.bind(DGG.WITHOUT, self.__out)
         self.bubble.setTransparency(TransparencyAttrib.MAlpha)
-        self.bubble.reparentTo(aspect2dp, NO_FADE_SORT_INDEX)
+        self.bubble.reparentTo(aspect2dp)
         
     def setCreate(self):
         if self.mode != MODE_NONE:
@@ -53,22 +55,47 @@ class ToonPick:
             
         self.mode = MODE_CHOOSE
         self.av = av
+        self.bubble['text'] = ''
+        self.bubble['command'] = self.__previewToon
         name = av.name
         dna = av.dna
-        # todo: load toon head
+        parsedDna = ToonDNA.ToonDNA()
+        parsedDna.makeFromNetString(dna)
+        self.dnaString = parsedDna
+        self.headModel = ToonHead.ToonHead()
+        self.headModel.setupHead(parsedDna, 1)
+        self.headModel.setZ(-0.4)
+        self.headModel.reparentTo(self.bubble)
+        self.headModel.setH(180)
+        self.headModel.setScale(0.9)
+        self.playText = OnscreenText(font = ToontownGlobals.getMickeyFont(),
+            scale = (0.6),
+            pos = (0,-.2),
+            fg = Vec4(1,1,0,1),
+            mayChange = 1,
+            parent = self.bubble
+        )
+        
+    def __previewToon(self):
+        self.picker.doPreview(self.parsedDna)
         
     def __click(self):
         if self.mode == MODE_CREATE:
             self.picker.requestCreateAvatar(self)
         
     def __hover(self, e):
-        self.bubble["text_fg"] = Vec4(0,0.9,1,1)
+        if self.mode == MODE_CREATE:
+            self.bubble["text_fg"] = Vec4(0,0.9,1,1)
+        else:
+            self.playText["text"] = TTLocalizer.Play
 
         if not self.bubble.isEmpty():
             self.bubble.setScale(0.22)
         
     def __out(self, e):
         self.bubble["text_fg"] = Vec4(0,0.5,1,1)
+        if self.mode == MODE_CHOOSE:
+            self.playText["text"] = ""
 
         if not self.bubble.isEmpty():
             self.bubble.setScale(0.2)

@@ -18,7 +18,8 @@ class LoadingScreen(Intro):
         self.logo = DirectButton(
             relief=None,
             image = loader.loadTexture("stage_3/maps/t2_logo.png"),
-            scale = Vec3(1.3,1,0.5)
+            scale = Vec3(1.3,1,0.4),
+            pos = (0,0,-0.1)
         )
         self.loadingAsset = OnscreenImage(
             image = loader.loadTexture("stage_3/maps/t2_gui_loadingAsset.png"),
@@ -43,8 +44,8 @@ class LoadingScreen(Intro):
         )
         self.clickToPlay.hide()
         self.logoIv1 = Sequence(
-            self.logo.scaleInterval(0.7, Vec3(1.34,1.04,0.54)),
-            self.logo.scaleInterval(0.7, Vec3(1.3,1,0.5))
+            self.logo.scaleInterval(0.7, Vec3(1.32,1.04,0.42)),
+            self.logo.scaleInterval(0.7, Vec3(1.3,1,0.4))
         )
 
         Intro.__init__(self)
