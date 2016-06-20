@@ -82,7 +82,9 @@ class AccountOperation(Operation):
                         return
                     self.toonFields[avId] = fields
                     self.toonsQueue.remove(avId)
-
+                    if not self.toonsQueue:
+                        self.demand("SendToons")
+                        
                 self.air.dbInterface.queryObject(self.accMgr.dbId, avId,
                                                      handleResp)
         if not self.toonsQueue:
