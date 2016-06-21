@@ -15,6 +15,10 @@ Astron Build of Panda3D 1.8.1
 
 BCrypt [https://github.com/pyca/bcrypt]
 
+## 4.
+
+PyOTP [One Time Password API's for CLIENT<->SERVER Authentication. Run pip install pyotp]
+
 ## 4. [Optional]
 
 MySQL [https://github.com/mysql/mysql-connector-python]
