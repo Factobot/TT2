@@ -135,7 +135,7 @@ class ToontownClientRepository(ClientRepositoryBase, FSM):
             self.forceTransition('CreateToon', slot)
             return
         elif status == 'choose':
-            base.transitions.fadeIn(0.5)
+            base.transitions.fadeOut(0.5)
             def done(t):
                 self.tookPicker.exit()
                 self.forceTransition("WaitSetAvatar", avId)
@@ -181,7 +181,6 @@ class ToontownClientRepository(ClientRepositoryBase, FSM):
         localAvatar.setLocation(parentId, zoneId)
         localAvatar.generateInit()
         localAvatar.generate()
-        print di
         dclass.receiveUpdateBroadcastRequiredOwner(localAvatar, di)
         localAvatar.announceGenerate()
         localAvatar.postGenerateMessage()
@@ -194,9 +193,17 @@ class ToontownClientRepository(ClientRepositoryBase, FSM):
     def enterPlay(self):
         shard = self.getStartDistrict()
         zoneId = 10100 #todo: save last zone
-        base.localAvatar.setLocation(shard, zoneId)
+        base.localAvatar.b_setLocation(shard, zoneId)
         #self.uberZoneInterest = self.addInterest(shard, 2, 'uberZone', 'uberZoneInterestComplete')
         #self.acceptOnce('uberZoneInterestComplete', self.uberZoneInterestComplete)
+        
+    def sendSetLocation(self, doId, parentId, zoneId):
+        datagram = PyDatagram()
+        datagram.addUint16(CLIENT_OBJECT_LOCATION)
+        datagram.addUint32(doId)
+        datagram.addUint32(parentId)
+        datagram.addUint32(zoneId)
+        self.send(datagram)
         
     def uberZoneInterestComplete(self):
         pass
