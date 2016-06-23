@@ -8,5 +8,6 @@ class SecurityKeyUD:
         self.__totp = pyotp.TOTP("DEMOSECRET")
         
     def match(self, key):
-        print key, self.__totp.now()
-		return str(key)
+        curKey = self.__totp.now()
+        print key, curKey
+        return str(key) == curKey
