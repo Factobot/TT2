@@ -3,6 +3,7 @@ from toontown.toonbase.ToontownLoader import ToontownLoader
 from toontown.toongui.LoadingScreen import LoadingScreen
 from direct.showbase.Transitions import Transitions
 from toontown.toonbase.AudioManager import AudioManager
+from toontown.toonbase import ToontownGlobals
 import time, sys
 
 class ToonBase(ShowBase, AudioManager):
@@ -31,6 +32,10 @@ class ToonBase(ShowBase, AudioManager):
         print (base.cr.doId2do)
     
     def createToonBase(self):
+        self.camLens.setFilmSize(*ToontownGlobals.FilmSize)
+        self.camLens.setFov(52.0)
+        self.camLens.setFar(400.0)
+        self.camLens.setNear(1.0)
         self.loadingScreen = LoadingScreen()
         self.loadingScreen.enter()
 

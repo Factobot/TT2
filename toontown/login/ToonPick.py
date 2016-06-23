@@ -59,7 +59,7 @@ class ToonPick:
         self.bubble['command'] = self.__previewToon
         name = av.name
         dna = av.dna
-        parsedDna = ToonDNA.ToonDNA()
+        self.parsedDna = parsedDna = ToonDNA.ToonDNA()
         parsedDna.makeFromNetString(dna)
         self.dnaString = parsedDna
         self.headModel = ToonHead.ToonHead()
@@ -77,6 +77,7 @@ class ToonPick:
         )
         
     def __previewToon(self):
+        self.picker.setCurrentSelection(self.av.avId)
         self.picker.doPreview(self.parsedDna)
         
     def __click(self):

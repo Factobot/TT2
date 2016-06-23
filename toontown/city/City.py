@@ -5,4 +5,7 @@ class City:
         
     def load(self):
         base.localAvatar.playAssistant.request("Play")
-        base.transitions.fadeOut(1)
+        base.transitions.fadeIn(1)
+        base.localAvatar.setPosHprScale(0,0,0,0,0,0,1,1,1)
+        base.localAvatar.reparentTo(render)
+        base.localAvatar.playAssistant.controlManager.get("walk").placeOnFloor()

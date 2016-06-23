@@ -103,6 +103,10 @@ headHeightDict = {'dls': 0.75,
 
 ToonHidden = 0
 ToonRender = 1
+DefaultFilmSize = (1.0, 0.75)
+TTOFilmSize = (1.0, 0.85)
+FilmSize = TTOFilmSize # That size was defined by vote, so please don't change it.
+ChatHotkey = "c"
 
 def getMickeyFont():
     return loader.loadFont("phase_3/models/fonts/MickeyFont.bam")

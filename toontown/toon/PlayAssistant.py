@@ -1,11 +1,13 @@
 from panda3d.core import *
 from direct.controls import GravityWalker
+from direct.gui.DirectGui import *
 from direct.fsm.FSM import *
 from toontown.toon.Toon import Toon
 from toontown.toon.ToonDNA import ToonDNA
 from toontown.toonbase import ToontownGlobals
 from toontown.controls import InteractiveCameraDriver
 from toontown.controls import ToontownControlManager
+from toontown.toon.ToonGUI import ToonGUI
 
 class PlayAssistant(FSM):
     wantLegacyLifter = False
@@ -24,6 +26,11 @@ class PlayAssistant(FSM):
         
     def setup(self):
         self.setupWalk()
+        self.__loadGui()
+        
+    def __loadGui(self):
+        self.toonGui = ToonGUI()
+        self.toonGui.load()
         
     def setupWalk(self):
         gravityWalker = GravityWalker.GravityWalker(gravity=32.174, legacyLifter=self.wantLegacyLifter)
@@ -116,12 +123,23 @@ class PlayAssistant(FSM):
 
         return
         
+    def enableGUI(self):
+        self.toonGui.enable()
+        
     def enterPlay(self):
+        cameraHeight = self.getAvatarHeight()
+        scaleFactor = (cameraHeight) * 0.3333333333
+        self.cameraDefaultPos = Point3(0, -9. * scaleFactor, cameraHeight + 2)
         self.setNormalSpeeds()
         self.controlManager.enable()
         self.activateWalkAnimations()
         self.enableInteractiveCamera()
-        base.camera.setPos(0,-18,4)
+        self.enableGUI()
+        base.camera.setPos(self.cameraDefaultPos)
+        base.camera.setHpr(0,-10,0)
+        
+    def getAvatarHeight(self):
+        return self.toon.find("**/head*").getZ(self.toon.find("**/legs"))
         
     def exitPlay(self):
         self.controlManager.disable()

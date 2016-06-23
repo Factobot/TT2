@@ -21,7 +21,6 @@ class DistributedToon(Toon, DistributedSmoothNode, DistributedAvatar):
         DistributedSmoothNode.b_setParent(self, ToontownGlobals.ToonRender)
         
     def setDNAString(self, dnaStr):
-        print len(dnaStr)
         Toon.setDNAString(self, dnaStr)
 
     def disable(self):

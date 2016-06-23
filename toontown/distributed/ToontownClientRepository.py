@@ -130,10 +130,17 @@ class ToontownClientRepository(ClientRepositoryBase, FSM):
         self.tookPicker.enter()
         self.accept("ToonPickerDone", self.__handlePickerDone)
         
-    def __handlePickerDone(self, av, slot, status):
+    def __handlePickerDone(self, avId, slot, status):
         if status == 'create':
             self.forceTransition('CreateToon', slot)
             return
+        elif status == 'choose':
+            base.transitions.fadeIn(0.5)
+            def done(t):
+                self.tookPicker.exit()
+                self.forceTransition("WaitSetAvatar", avId)
+                return t.done
+            taskMgr.doMethodLater(0.6, done, "trFadeDone")
 
     def exitLoginDone(self):
         pass
@@ -186,10 +193,10 @@ class ToontownClientRepository(ClientRepositoryBase, FSM):
         
     def enterPlay(self):
         shard = self.getStartDistrict()
-        zoneId = 1000 #todo: save last zone
+        zoneId = 10100 #todo: save last zone
         base.localAvatar.setLocation(shard, zoneId)
-        self.uberZoneInterest = self.addInterest(shard, OTPGlobals.UberZone, 'uberZone', 'uberZoneInterestComplete')
-        self.acceptOnce('uberZoneInterestComplete', self.uberZoneInterestComplete)
+        #self.uberZoneInterest = self.addInterest(shard, 2, 'uberZone', 'uberZoneInterestComplete')
+        #self.acceptOnce('uberZoneInterestComplete', self.uberZoneInterestComplete)
         
     def uberZoneInterestComplete(self):
         pass
@@ -214,7 +221,7 @@ class ToontownClientRepository(ClientRepositoryBase, FSM):
             self.handleGenerateWithRequired(di)
         elif msgType == CLIENT_ENTER_OBJECT_REQUIRED_OTHER:
             self.handleGenerateWithRequired(di, other=True)
-        elif msgType == CLIENT_ENTER_OBJECT_REQUIRED_OTHER_OWNER:
+        elif msgType == CLIENT_ENTER_OBJECT_REQUIRED_OWNER:
             self.handleGenerateWithRequiredOtherOwner(di)
         elif msgType == CLIENT_DONE_INTEREST_RESP:
             self.gotInterestDoneMessage(di)

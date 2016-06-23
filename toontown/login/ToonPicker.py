@@ -9,6 +9,7 @@ class ToonPicker:
 
     def __init__(self, avList, doneEvent):
         self.doneEvent = doneEvent
+        self.currentSelection = None
         self.background = OnscreenImage(
             image = loader.loadTexture("stage_3/maps/t2_gui_pat_bg.png"),
         )
@@ -37,6 +38,15 @@ class ToonPicker:
             fg = Vec4(0,0.6,1,1),
             wordwrap = 5
         )
+        self.playButton = DirectButton(
+            image = loader.loadTexture("stage_3/maps/t2_gui_confirm.png"),
+            scale = (0.2),
+            pos = (0.8,0,-0.7),
+            parent = self.profileBg,
+            relief = None,
+            command = self.__handleToonPlay
+        )
+        self.playButton.hide()
         
         self.picks = []
         for i in range(NUM_TOONS):
@@ -46,10 +56,7 @@ class ToonPicker:
             self.picks.append(pick)
         
         for av in avList:
-            if av.slot in range(0, NUM_TOONS):
-                self.picks[av.slot].setToon(av)
-            else:
-                print "Avatar with unrecognized slot %d" %av.slot
+            self.picks[avList.index(av)].setToon(av)
         
         for pick in self.picks:
             if pick.mode == MODE_NONE:
@@ -57,6 +64,7 @@ class ToonPicker:
                 
         self.pToon = Toon.Toon()
         self.pToon.reparentTo(self.profileBg)
+        self.pToon.hide()
         
         self.background.hide()
         self.profileBg.hide()
@@ -73,11 +81,30 @@ class ToonPicker:
         self.background.hide()
         self.profileBg.hide()
         self.title.hide()
+        self.pToon.cleanup()
+        base.audioManager.stopMusic()
         for pick in self.picks:
             pick.destroy()
             
+    def setCurrentSelection(self, avId):
+        self.currentSelection = avId
+            
     def doPreview(self, toonDna):
+        self.notChosen.hide()
+        self.playButton.show()
         self.pToon.setDNA(toonDna)
+        self.pToon.setScale(0.25)
+        self.pToon.setDepthTest(1)
+        self.pToon.setDepthWrite(1)
+        self.pToon.setH(180)
+        self.pToon.setPos(0,0,-0.6)
+        self.pToon.loop("neutral")
+        self.pToon.show()
+        
+    def __handleToonPlay(self):
+        if self.currentSelection:
+            print "indeed"
+            messenger.send(self.doneEvent, [self.currentSelection, None, "choose"])
         
     def requestCreateAvatar(self, pick):
         messenger.send(self.doneEvent, [None, pick.slot, "create"])

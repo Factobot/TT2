@@ -36,7 +36,7 @@ class MakeAToonSpaceGUI(FSM):
         self.paper.removeNode()
         self.guiNode.removeNode()
         self.rightNode.removeNode()
-        self.leftNode.show()
+        self.leftNode.removeNode()
         self.paperNode.removeNode()
         self.nextButton.removeNode()
         self.backButton.removeNode()

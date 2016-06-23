@@ -462,7 +462,6 @@ class Toon(Avatar, ToonHead):
         self.isDisguised = 0
         self.defaultColorScale = None
         self.jar = None
-        self.soundChatBubble = base.loadSfx('phase_3/audio/sfx/GUI_balloon_popup.ogg')
         self.animFSM = ClassicFSM('Toon', [State('off', self.enterOff, self.exitOff),
          State('neutral', self.enterNeutral, self.exitNeutral),
          State('victory', self.enterVictory, self.exitVictory),
@@ -588,6 +587,7 @@ class Toon(Avatar, ToonHead):
             self.style = dna
             self.generateToon()
         self.clearBin()
+        self.generateNametag()
 
     def parentToonParts(self):
         if self.hasLOD():
@@ -1506,11 +1506,13 @@ class Toon(Avatar, ToonHead):
             self.playingAnim = anim
             self.setPlayRate(animMultiplier, anim)
             self.loop(anim)
+            self.nametag.setZ(self.nametag.getZ() + 0.95)
         
 
     def exitJumpAirborne(self):
         self.stop()
         self.playingAnim = 'neutral'
+        self.nametag.setZ(self.nametag.getZ() - 0.95)
 
     def enterJumpLand(self, animMultiplier = 1, ts = 0, callback = None, extraArgs = []):
         if not self.isDisguised:
