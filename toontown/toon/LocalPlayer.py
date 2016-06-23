@@ -20,6 +20,10 @@ class LocalPlayer(DistributedToon):
             cityLoader = City2Loader[zoneId](zoneId)
             cityLoader.load()
             self.currentCity = cityLoader
+            print self.zoneId
+            print self.parentId
+            print self.cr.doId2do
+            print self.getPos()
         
     def announceGenerate(self):
         DistributedToon.announceGenerate(self)
