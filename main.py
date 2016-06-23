@@ -1,4 +1,4 @@
-if 1:
+if 0:
     from direct.stdpy import threading, thread
     import sys
 
