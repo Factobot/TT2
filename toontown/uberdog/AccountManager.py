@@ -1,19 +1,19 @@
 from direct.distributed.DistributedObjectGlobal import DistributedObjectGlobal
-from toontown.distributed.PotentialToon import *
+from toontown.distributed.PotentialToon import  *
 import pyotp, string, random
 
 class AccountManager(DistributedObjectGlobal):
 
     def __init__(self, cr):
         DistributedObjectGlobal.__init__(self, cr)
-        self.__totp = pyotp.TOTP(''.join(random.SystemRandom().choice(string.ascii_uppercase) for _ in range(1024)))
+        self.__totp = pyotp.TOTP("DEMOSECRET")
     
     def __generateSecurityKey(self):
         return self.__totp.now()
     
     def requestLogin(self, token, password):
         __key = self.__generateSecurityKey()
-        self.sendUpdate('requestLogin', [token, password, __key])
+        self.sendUpdate('requestLogin', [token, password, int(__key)])
 
     def recieveAvatar(self, avList):
         avList = list(avList)
