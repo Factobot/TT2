@@ -9,4 +9,3 @@ class SecurityKeyUD:
         
     def match(self, key):
         print key, self.__totp.now()
-        return str(key) == self.__totp.now()
