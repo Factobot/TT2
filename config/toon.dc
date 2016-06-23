@@ -77,13 +77,13 @@ dclass DistributedObjectGlobal: DistributedObject {
 }
 
 struct ToonObject {
+  uint32 doId;
   string dnaString;
   string name;
-  uint8 posIndex;
 };
 
 dclass AccountManager: DistributedObjectGlobal {
-  requestLogin(string token, string password) clsend;
+  requestLogin(string token, string password, uint32 key) clsend;
   recieveAvatar(ToonObject[]);
 
   uint32[] ACCOUNT_AVATARS required db;
@@ -97,10 +97,8 @@ dclass DistributedAvatar : DistributedObject {
 };
 
 dclass DistributedToon : DistributedAvatar, DistributedSmoothNode {
-  setDNAString(string) required broadcast ownrecv ram db;
-  setName(string) required broadcast ownrecv ram db;
-  setSlotId(uint8) required db;
-
+  setDNAString(string) required broadcast ownrecv db;
+  setName(string) required broadcast ownrecv db;
   setAnimState(char [1-100]) broadcast ownsend ram airecv;
 };
 

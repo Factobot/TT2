@@ -44,7 +44,8 @@ class AccountOperation(Operation):
             self.killConnection('Account object not found in the database.')
             return
         self.account = fields
-        self.demand("SetAccount")
+        self.avList = self.account["ACCOUNT_AVATARS"]
+        self.demand("QueryToons")
         
     def enterCreate(self):
         self.account = {
@@ -92,11 +93,10 @@ class AccountOperation(Operation):
             
     def enterSendToons(self):
         avatars = []
-        for fields in self.toonFields.values():
-            dna = fields["setDNAString"] #TODO: parse DNA and check if it's allowed
-            name = fields["setName"] #TODO: name states
-            index = fields["setSlotId"]
-            avatars.append([dna, name, index])
+        for avId, fields in self.toonFields.items():
+            dna = fields["setDNAString"][0] #TODO: parse DNA and check if it's allowed
+            name = fields["setName"][0] #TODO: name states
+            avatars.append([avId, dna, name])
         self.potAvList = avatars
         self.demand("SetAccount")
 
@@ -109,7 +109,7 @@ class AccountOperation(Operation):
 
         datagram = PyDatagram()
         datagram.addServerHeader(self.connectionId, self.air.ourChannel, CLIENTAGENT_SET_CLIENT_ID)
-        datagram.addUint64(self.accountId << 32) # TODO!
+        datagram.addUint64(self.accountId << 32)
         self.air.send(datagram)
         datagram.clear() # Cleanse data
 
@@ -165,7 +165,7 @@ class AccountManagerUD(DistributedObjectGlobalUD):
         dg.addString(reason)
         self.air.send(dg)
 
-    def requestLogin(self, token, password):
+    def requestLogin(self, token, password, key):
         sender = self.air.getMsgSender()
         if sender >> 32: # If already logged in
             self.killConnection(sender, "The current account is already logged in.")
@@ -174,6 +174,12 @@ class AccountManagerUD(DistributedObjectGlobalUD):
             self.killConnection(sender, "Invalid token!")
             return
         
+        if self.air.securityKeyEnabled:
+            keyMatch = self.air.securityKey.match(key)
+            if not keyMatch:
+                self.killConnection(sender, "Invalid authentication key!")
+                return
+            
         self.connection2operation[sender] = AccountOperation(self, sender, token)
         self.connection2operation[sender].request("Start")
 

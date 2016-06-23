@@ -53,7 +53,6 @@ class AvatarCreation(Operation):
         fields = {
             'setDNAString': (self.dnaString,),
             'setName': (self.name,),
-            'setSlotId': (self.slotId,)
         }
 
         self.air.dbInterface.createObject(
@@ -118,7 +117,7 @@ class AvatarLoading(Operation):
         self.air.send(dg)
 
         self.air.sendActivate(
-            self.avId, 0, 0, self.air.dclassesByName['DistributedToonUD'], {})
+            self.avId, 0, 0)
         
         # Add to the avatar channel
         dg = PyDatagram()
