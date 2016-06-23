@@ -1,5 +1,5 @@
 from direct.distributed.DistributedObjectGlobal import DistributedObjectGlobal
-from toontown.distributed.PotentialToon import 
+from toontown.distributed.PotentialToon import  *
 import pyotp, string
 
 class AccountManager(DistributedObjectGlobal):

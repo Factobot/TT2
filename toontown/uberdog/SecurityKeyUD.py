@@ -1,4 +1,4 @@
-import pyotp, string
+import pyotp, string, random
 
 class SecurityKeyUD:
     def __init__(self, air):
@@ -16,4 +16,4 @@ class SecurityKeyUD:
         return task.again
         
     def match(self, key):
-        return key == self.__currentToken:
+        return key == self.__currentToken
