@@ -7,7 +7,7 @@ from toontown.uberdog.SecurityKeyUD import SecurityKeyUD
 class UberdogRepository(AstronInternalRepository):
     GameGlobalsId = GameGlobals.GameGlobalsId
     dbId = 4003
-    securityKeyEnabled = 1
+    securityKeyEnabled = 0
     
     def __init__(self, dcFileNames, baseChannel, serverId):
         AstronInternalRepository.__init__(self, baseChannel, serverId, dcFileNames, dcSuffix='UD')
