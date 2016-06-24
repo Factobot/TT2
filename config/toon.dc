@@ -103,6 +103,7 @@ dclass DistributedToon : DistributedAvatar, DistributedSmoothNode {
 };
 
 dclass DistributedDistrict : DistributedObject {
+  setParentingRules(string, string) broadcast ram;
   setDistrictName(string) required broadcast ram;
   setDistrictType(uint8) required broadcast ram;
   setAvailable(uint8) required broadcast ram;
