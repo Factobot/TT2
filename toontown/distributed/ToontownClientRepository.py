@@ -194,8 +194,9 @@ class ToontownClientRepository(ClientRepositoryBase, FSM):
         shard = self.getStartDistrict()
         zoneId = 10100 #todo: save last zone
         base.localAvatar.b_setLocation(shard, zoneId)
-        #self.uberZoneInterest = self.addInterest(shard, 2, 'uberZone', 'uberZoneInterestComplete')
-        #self.acceptOnce('uberZoneInterestComplete', self.uberZoneInterestComplete)
+        
+        # This listens for interest in the shard and zone specified above for in game use.
+        self.playGameHandle = self.addInterest(shard, zoneId, 'playGameHandle')
         
     def sendSetLocation(self, doId, parentId, zoneId):
         datagram = PyDatagram()
@@ -243,10 +244,17 @@ class ToontownClientRepository(ClientRepositoryBase, FSM):
         parentId = di.getUint32()
         zoneId = di.getUint32()
         classId = di.getUint16()
+        
+        if other:
+            self.doGenerate(parentId, zoneId, classId, doId, di)
 
         dclass = self.dclassesByNumber[classId]  
         dclass.startGenerate()
-        distObj = self.generateWithRequiredFields(dclass, doId, di, parentId, zoneId)
+        try:
+            distObj = self.generateWithRequiredFields(dclass, doId, di, parentId, zoneId)
+        except:
+            distObj = None
+        
         dclass.stopGenerate()
 
     def handleGenerateWithRequiredOtherOwner(self, di):
