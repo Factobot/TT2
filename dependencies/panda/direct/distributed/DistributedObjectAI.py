@@ -3,9 +3,17 @@
 from direct.directnotify.DirectNotifyGlobal import directNotify
 from direct.distributed.DistributedObjectBase import DistributedObjectBase
 from direct.showbase import PythonUtil
+from direct.distributed import ParentMgr
 from pandac.PandaModules import *
 #from PyDatagram import PyDatagram
 #from PyDatagramIterator import PyDatagramIterator
+
+class FakeParentManager:
+	parentMgr = ParentMgr.ParentMgr()
+	
+	@staticmethod
+	def getParentMgr():
+		return FakeParentManager.parentMgr
 
 class DistributedObjectAI(DistributedObjectBase):
     notify = directNotify.newCategory("DistributedObjectAI")
@@ -303,8 +311,12 @@ class DistributedObjectAI(DistributedObjectBase):
         # setLocation destroys self._zoneData if we move away to
         # a different zone
         if self._zoneData is None:
-            from otp.ai.AIZoneData import AIZoneData
-            self._zoneData = AIZoneData(self.air, self.parentId, self.zoneId)
+            try:
+                from otp.ai.AIZoneData import AIZoneData
+                self._zoneData = AIZoneData(self.air, self.parentId, self.zoneId)
+            except:
+                return FakeParentManager()
+        
         return self._zoneData
 
     def releaseZoneData(self):
