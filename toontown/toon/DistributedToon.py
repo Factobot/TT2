@@ -14,18 +14,19 @@ class DistributedToon(Toon, DistributedSmoothNode, DistributedAvatar):
 
     def generate(self):
         DistributedSmoothNode.generate(self)
-        #DistributedSmoothNode.d_setParent(self, ToontownGlobals.ToonHidden)
+        DistributedSmoothNode.d_setParent(self, ToontownGlobals.ToonHidden)
+        self.startSmooth()
 
     def announceGenerate(self):
         DistributedSmoothNode.announceGenerate(self)
-        #DistributedSmoothNode.d_setParent(self, ToontownGlobals.ToonRender)
+        DistributedSmoothNode.d_setParent(self, ToontownGlobals.ToonRender)
         
     def setDNAString(self, dnaStr):
         Toon.setDNAString(self, dnaStr)
 
     def disable(self):
         DistributedSmoothNode.disable(self)
-        #DistributedSmoothNode.d_setParent(self, ToontownGlobals.ToonHidden)
+        DistributedSmoothNode.d_setParent(self, ToontownGlobals.ToonHidden)
     
     def setAnimState(self, animName):
         if self.animFSM.getCurrentState().getName() == animName:
@@ -39,5 +40,9 @@ class DistributedToon(Toon, DistributedSmoothNode, DistributedAvatar):
     def b_setAnimState(self, animState):
         self.setAnimState(animState)
         self.d_setAnimState(animState)
+
+    def startSmooth(self):
+        DistributedSmoothNode.startPosHprBroadcast(self)
+        DistributedSmoothNode.startSmooth(self)
                 
         
