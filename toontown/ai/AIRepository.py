@@ -13,6 +13,12 @@ class AIRepository(AstronInternalRepository):
         self.districtName = districtName
         self.districtType = districtType
         self.cityHandles = {}
+
+    def getAvatarIdFromSender(self):
+        return self.getMsgSender() & 0xFFFFFFFF
+
+    def getAccountIdFromSender(self):
+        return (self.getMsgSender() >> 32) & 0xFFFFFFFF
         
     def handleConnected(self):
         AstronInternalRepository.handleConnected(self)
