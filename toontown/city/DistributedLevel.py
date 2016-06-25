@@ -5,7 +5,7 @@ class DistributedLevel(DistributedNode):
     def __init__(self, cr):
         DistributedNode.__init__(self, cr)
         self.cr.levelObject = self
-        
+
         self.levelZoneId = 0
         self.levelModel = None
         self.levelXYZHPR = None
@@ -27,7 +27,6 @@ class DistributedLevel(DistributedNode):
         self.levelXYZHPR = [x, y, z, h, p, r]
 
     def requestEnter(self):
-        print 'loadLevel'
         self.sendUpdate('requestEnter', [
             ])
 
