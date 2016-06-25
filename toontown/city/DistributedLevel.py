@@ -6,7 +6,7 @@ class DistributedLevel(DistributedNode):
         DistributedNode.__init__(self, cr)
         self.levelZoneId = 0
         self.levelModel = None
-        self.levelLocation = None
+        self.levelXYZHPR = None
         self.environment = None
 
     def generate(self):
