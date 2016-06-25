@@ -6,6 +6,7 @@ from toontown.toon.ToonDNA import ToonDNA
 from toontown.login import PickerGlobals
 
 class Operation(FSM):
+
     def __init__(self, avMgr, accId, slotId, name, dnaString, avId):
         FSM.__init__(self, self.__class__.__name__)
         self.avMgr = avMgr
@@ -37,11 +38,11 @@ class Operation(FSM):
         self.handleQueryDone()
         
     def killConnection(self, reason):
-        print reason
         self.avMgr.dropConnection(self.connId(self.accId), reason)
         self.demand("Off")
 
 class AvatarCreation(Operation):
+
     def handleQueryDone(self):
         if self.avList[self.slotId] != 0:
             self.killConnection("Attempted to create toon in occupied slot.")
@@ -86,6 +87,7 @@ class AvatarCreation(Operation):
         self.demand("Off")
         
 class AvatarLoading(Operation):
+    
     def handleQueryDone(self):
         if self.avId not in self.avList:
             self.killConnection("Tried to play avatar not in list,")
