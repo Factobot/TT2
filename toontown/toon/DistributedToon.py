@@ -23,13 +23,17 @@ class DistributedToon(Toon, DistributedSmoothNode, DistributedAvatar):
     def setDNAString(self, dnaStr):
         Toon.setDNAString(self, dnaStr)
 
+    def delete(self):
+        DistributedSmoothNode.delete(self)
+        self.wrtReparentTo(hidden)
+
     def disable(self):
         DistributedSmoothNode.disable(self)
-        self.wrtReparentTo(hidden)
     
     def setAnimState(self, animName):
         if self.animFSM.getCurrentState().getName() == animName:
             return
+
         self.curAnimState = animName
         self.animFSM.request(animName)
         
@@ -41,7 +45,7 @@ class DistributedToon(Toon, DistributedSmoothNode, DistributedAvatar):
         self.d_setAnimState(animState)
 
     def startSmooth(self):
-        DistributedSmoothNode.startPosHprBroadcast(self)
         DistributedSmoothNode.startSmooth(self)
-                
+        DistributedSmoothNode.startPosHprBroadcast(self)
+
         
