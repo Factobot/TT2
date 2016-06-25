@@ -34,7 +34,7 @@ class DistributedLevel(DistributedNode):
 
         if self.levelModel:
             self.environment = loader.loadModel(self.levelModel)
-            self.environment.setPosHpr(*self.levelLocation)
+            self.environment.setPosHpr(*self.levelXYZHPR)
             self.environment.flattenMedium()
             self.environment.wrtReparentTo(render)
 
