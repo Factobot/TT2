@@ -237,9 +237,9 @@ class ToontownClientRepository(ClientRepositoryBase, FSM):
         elif msgType == CLIENT_OBJECT_SET_FIELD:
             self.handleUpdateField(di)
         elif msgType == CLIENT_OBJECT_LEAVING:
-            pass
+            self.handleDisable(di)
         elif msgType == CLIENT_OBJECT_LEAVING_OWNER:
-            pass
+            self.handleDisable(di, ownerView = True)
         elif msgType == CLIENT_ENTER_OBJECT_REQUIRED:
             self.handleGenerateWithRequired(di)
         elif msgType == CLIENT_ENTER_OBJECT_REQUIRED_OTHER:
@@ -307,7 +307,11 @@ class ToontownClientRepository(ClientRepositoryBase, FSM):
                 self.handleObjectLocation(di)
         else:
             self.handleObjectLocation(di)
-            
+
+    def handleDisable(self, di, ownerView = False):
+        doId = di.getUint32()
+        if not self.isLocalId(doId):
+            self.disableDoId(doId, ownerView)
 
             
             
