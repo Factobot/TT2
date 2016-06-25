@@ -211,7 +211,6 @@ class ToontownClientRepository(ClientRepositoryBase, FSM):
         base.localAvatar.playAssistant.request("Play")
         base.transitions.fadeIn(1)
         base.localAvatar.setPosHprScale(0,0,0,0,0,0,1,1,1)
-        base.localAvatar.reparentTo(render)
         base.localAvatar.playAssistant.controlManager.get("walk").placeOnFloor()
         
     def sendSetLocation(self, doId, parentId, zoneId):
