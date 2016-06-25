@@ -8,6 +8,7 @@ from toontown.ai import DistributedDistrict/AI
 from toontown.avatar import DistributedAvatar/AI
 from toontown.toon import DistributedToon/AI/UD/OV
 from toontown.uberdog import AvatarManager/UD
+from toontown.city import DistributedLevel/AI
 
 typedef uint8 bool;
 typedef uint32 DoId;
@@ -113,4 +114,12 @@ dclass AvatarManager : DistributedObjectGlobal {
   requestCreateAvatar(uint8, string, blob) clsend;
   createAvatarResponse(uint32);
   chooseAvatar(uint32) clsend;
-}
+};
+
+dclass DistributedLevel : DistributedNode {
+  setLevelZoneId(uint32) required broadcast ram;
+  setLevelModel(string) required broadcast ram;
+  setLevelLocation(int16/10, int16/10, int16/10, int16%360/10, int16%360/10, int16%360/10) required broadcast ram;
+  requestEnter() clsend airecv;
+  loadLevel();
+} ;

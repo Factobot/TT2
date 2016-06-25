@@ -2,8 +2,8 @@ from direct.distributed.AstronInternalRepository import AstronInternalRepository
 from direct.distributed.PyDatagram import PyDatagram
 from direct.distributed.MsgTypes import *
 from toontown.ai.DistributedDistrictAI import DistributedDistrictAI
-from toontown.city.CityHandleAI import CityHandleAI
 from toontown.toonbase import ToontownGlobals
+from toontown.city.LevelLoaderAI import LevelLoaderAI
 
 class AIRepository(AstronInternalRepository):
     GameGlobalsId = 1000
@@ -39,12 +39,10 @@ class AIRepository(AstronInternalRepository):
         self.createZones()
         
     def createGlobals(self):
-        pass
+        self.levelLoader = LevelLoaderAI(self)
         
     def createZones(self):
         for cityZone in ToontownGlobals.ToontownZones.keys():
-            self.cityHandles[cityZone] = CityHandleAI(self, cityZone)
-            self.cityHandles[cityZone].processCity()
-    
+            self.levelLoader.generateLevel(cityZone, ToontownGlobals.zone2Details[cityZone][0], ToontownGlobals.zone2Details[cityZone][1])
     
         

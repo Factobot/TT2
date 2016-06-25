@@ -10,7 +10,7 @@ from toontown.makeatoon.MakeAToon import MakeAToon
 from toontown.distributed import GameGlobals
 from toontown.distributed.PotentialToon import PotentialToon
 from toontown.toon.LocalPlayer import LocalPlayer
-
+from toontown.toonbase import ToontownGlobals
 import random
 
 class ToontownClientRepository(ClientRepositoryBase, FSM):
@@ -59,6 +59,7 @@ class ToontownClientRepository(ClientRepositoryBase, FSM):
         self.accountManager = self.generateGlobalObject(GameGlobals.DO_ID_ACCOUNT_MANAGER, 'AccountManager')
         self.avatarManager = self.generateGlobalObject(GameGlobals.DO_ID_AVATAR_MANAGER, 'AvatarManager')
         self.listShardMap = { }
+        self.levelObject = None
 
     def getPlayToken(self):
         return str(self.accountDetails[0])
@@ -136,10 +137,12 @@ class ToontownClientRepository(ClientRepositoryBase, FSM):
             return
         elif status == 'choose':
             base.transitions.fadeOut(0.5)
+            
             def done(t):
                 self.tookPicker.exit()
                 self.forceTransition("WaitSetAvatar", avId)
                 return t.done
+            
             taskMgr.doMethodLater(0.6, done, "trFadeDone")
 
     def exitLoginDone(self):
@@ -192,11 +195,24 @@ class ToontownClientRepository(ClientRepositoryBase, FSM):
         
     def enterPlay(self):
         shard = self.getStartDistrict()
-        zoneId = 10100 #todo: save last zone
+        zoneId = ToontownGlobals.TOONTROPOLIS_ZONE # todo: save last zone
         base.localAvatar.b_setLocation(shard, zoneId)
-        
         # This listens for interest in the shard and zone specified above for in game use.
-        self.playGameHandle = self.addInterest(shard, zoneId, 'playGameHandle')
+        self.playGameHandle = self.addInterest(shard, zoneId, 'playGameHandle', 'playGameHandleResp')
+        self.acceptOnce('playGameHandleResp', self.handlePlayGameResp, [shard, zoneId])
+
+    def handlePlayGameResp(self, shard, zoneId):
+        self.accept('levelCreated', self.handleLevelCreated)
+
+        if self.levelObject:
+            self.levelObject.requestEnter()
+
+    def handleLevelCreated(self):
+        base.localAvatar.playAssistant.request("Play")
+        base.transitions.fadeIn(1)
+        base.localAvatar.setPosHprScale(0,0,0,0,0,0,1,1,1)
+        base.localAvatar.reparentTo(render)
+        base.localAvatar.playAssistant.controlManager.get("walk").placeOnFloor()
         
     def sendSetLocation(self, doId, parentId, zoneId):
         datagram = PyDatagram()

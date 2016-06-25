@@ -9,6 +9,9 @@ ToontownZones = {
     ]
 }
 
+zone2Details = {
+    TOONTROPOLIS_ZONE: ['phase_4/models/neighborhoods/toontown_central', [0,0,0,0,0,0]]
+}
 
 # Toon control options
 ToonSpeedFactor = 1.25
