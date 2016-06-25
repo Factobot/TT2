@@ -23,7 +23,7 @@ class DistributedLevel(DistributedNode):
         self.levelModel = model
 
     def setLevelXYZHPR(self, x, y, z, h, p, r):
-        self.levelLocation = [x, y, z, h, p, r]
+        self.levelXYZHPR = [x, y, z, h, p, r]
 
     def requestEnter(self):
         self.sendUpdate('requestEnter', [
