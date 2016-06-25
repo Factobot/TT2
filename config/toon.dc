@@ -116,7 +116,7 @@ dclass AvatarManager : DistributedObjectGlobal {
   chooseAvatar(uint32) clsend;
 };
 
-struct LevelLocation {
+struct LevelXYZHPR {
   int16/10 x;
   int16/10 y;
   int16/10 z;
@@ -128,7 +128,7 @@ struct LevelLocation {
 dclass DistributedLevel : DistributedNode {
   setLevelZoneId(uint32) required broadcast ram;
   setLevelModel(string) required broadcast ram;
-  setLevelLocation(LevelLocation []) required broadcast ram;
+  setLevelXYZHPR(LevelXYZHPR []) required broadcast ram;
   requestEnter() clsend airecv;
   loadLevel();
-} ;
+};
