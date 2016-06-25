@@ -128,7 +128,7 @@ struct LevelXYZHPR {
 dclass DistributedLevel : DistributedNode {
   setLevelZoneId(uint32) required broadcast ram;
   setLevelModel(string) required broadcast ram;
-  setLevelXYZHPR(LevelXYZHPR[]) required broadcast ram;
+  setLevelXYZHPR(LevelXYZHPR) required broadcast ram;
   requestEnter() clsend airecv;
   loadLevel();
 };
