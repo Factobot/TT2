@@ -7,4 +7,14 @@ class InteractiveObject(DirectObject):
         self.objType = objType
         
     def enable(self):
-        pass#base.interactiveObjectMgr.add(self)
+        base.interactiveObjectMgr.add(self)
+        
+    def update(self):
+        if self.objType == INTERACTIVE_NAMETAG:
+            self.updateScreenNametag()
+            
+    def getScreenCell(self):
+        return base.interactiveObjectMgr.getAvailableCell()
+        
+    def availableScreenCell(self, cellParent, cellPos):
+        base.interactiveObjectMgr.setAvailableCell(cellParent, cellPos)

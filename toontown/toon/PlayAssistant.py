@@ -138,6 +138,18 @@ class PlayAssistant(FSM):
         base.camera.setPos(self.cameraDefaultPos)
         base.camera.setHpr(0,-10,0)
         
+    def disableAvatarControls(self):
+        self.controlManager.disable()
+        self.deactivateWalkAnimations()
+        self.disableInteractiveCamera()
+        self.toon.b_setAnimState("neutral")
+        
+    def enableAvatarControls(self):
+        self.controlManager.enable()
+        self.activateWalkAnimations()
+        self.enableInteractiveCamera()
+        self.toon.b_setAnimState("neutral")
+        
     def getAvatarHeight(self):
         return self.toon.find("**/head*").getZ(self.toon.find("**/legs"))
         

@@ -4,6 +4,7 @@ from toontown.toongui.LoadingScreen import LoadingScreen
 from direct.showbase.Transitions import Transitions
 from toontown.toonbase.AudioManager import AudioManager
 from toontown.toonbase import ToontownGlobals
+from toontown.interaction.InteractiveObjectManager import InteractiveObjectManager
 import time, sys
 
 class ToonBase(ShowBase, AudioManager):
@@ -11,6 +12,7 @@ class ToonBase(ShowBase, AudioManager):
     def __init__(self, *args, **kwArgs):
         ShowBase.__init__(self, args, kwArgs)
         self.audioManager = AudioManager()
+        self.interactiveObjectMgr = InteractiveObjectManager()
         self.transitions.IrisModelName = 'phase_3/models/misc/iris'
         self.transitions.FadeModelName = 'phase_3/models/misc/fade'
         

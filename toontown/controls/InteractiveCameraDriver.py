@@ -255,8 +255,8 @@ class InteractiveCameraDriver(DirectObject):
         return self.__idealCameraPos
         
     def setTarget(self, target):
-        self.target = target
-        if self.target:
+        if target and not self.target:
+            self.target = target
             self.__idealCameraPos = base.playAssistant.cameraDefaultPos
             self.cameraParent = self.target.attachNewNode('cameraParent')
             self.camera.reparentTo(self.cameraParent)
@@ -269,7 +269,8 @@ class InteractiveCameraDriver(DirectObject):
         self.accept('-', self.__handleCameraOut)
         self.accept('r', self.__resetCameraPos)
         taskMgr.add(self.__cameraControlTask, 'InteractiveCameraControlTask')
-        taskMgr.add(self.__updateCanControl, 'UpdateCan_InteractiveCameraControlTask')
+        #taskMgr.add(self.__updateCanControl, 'UpdateCan_InteractiveCameraControlTask')
+        self.canControlCam = 1
         #self.startUpdateSmartCamera()
         
     def __handlePressMouse(self):
@@ -317,6 +318,8 @@ class InteractiveCameraDriver(DirectObject):
         
     def stop(self):
         self.ignore('m')
+        if self.wantControl:
+            self.__handlePressMouse()
         self.ignore('=' and '+')
         self.ignore('-')
         self.ignore('r')

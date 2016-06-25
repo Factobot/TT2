@@ -1,4 +1,4 @@
-from toontown.interaction import Nametag
+from toontown.interaction import Nametag, ChatBalloon
 
 class Avatar:
     
@@ -12,8 +12,21 @@ class Avatar:
         nametagJoint = self.find("**/head*")
         self.nametagJoint = self.attachNewNode("nametagJoint")
         self.nametagJoint.setZ(nametagJoint.getZ(self) + 1.15)
-        self.nametag = Nametag.Nametag(self.nametagJoint)
+        self.nametag = Nametag.Nametag(self, self.nametagJoint)
         self.nametag.load()
+        self.chat = ChatBalloon.ChatBalloon(self, self.nametag)
+        self.chat.load()
+        self.chat2d = ChatBalloon.ChatBalloon(self, self.nametag)
+        self.chat2d.load(is2d=1)
+        self.chatThought = ChatBalloon.ChatBalloon(self, self.nametag)
+        self.chatThought.load(isThought=1)
+        
+    def setChat(self, chat, isThought = 0):
+        if isThought:
+            self.chatThought.setChat(chat)
+        else:
+            self.chat.setChat(chat)
+        self.chat2d.setChat(chat)
         
     def updateNametag(self):
         self.nametag.setName(self.name)
