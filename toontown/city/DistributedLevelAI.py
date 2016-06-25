@@ -18,10 +18,5 @@ class DistributedLevelAI(DistributedNodeAI):
         return self.levelXYZHPR
 
     def requestEnter(self):
-        avatarId = self.air.getAvatarIdFromSender()
-
-        if avatarId not in self.air.doId2do:
-            return
-
-        self.sendUpdateToAvatarId(avatarId, 'loadLevel', [
+        self.sendUpdateToAvatarId(self.air.getAvatarIdFromSender(), 'loadLevel', [
             ])
