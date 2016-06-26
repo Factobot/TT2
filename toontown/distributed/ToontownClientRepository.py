@@ -174,6 +174,7 @@ class ToontownClientRepository(ClientRepositoryBase, FSM):
         
     def handleAvatarResponseMsg(self, avId, di):
         dclass = self.dclassesByName['DistributedToon']
+        dclass.setOwnerClassDef(dclass.getName())
         localAvatar = LocalPlayer(self)
         localAvatar.dclass = dclass
         base.localAvatar = localAvatar
