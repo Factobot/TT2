@@ -3,6 +3,7 @@ from direct.distributed.DistributedObjectAI import DistributedObjectAI
 from direct.distributed.PyDatagram import *
 from toontown.distributed import GameGlobals
 from toontown.uberdog.SecurityKeyUD import SecurityKeyUD
+from toontown.uberdog.AccountBackdoor import AccountBackdoor
 
 class UberdogRepository(AstronInternalRepository):
     GameGlobalsId = GameGlobals.GameGlobalsId
@@ -22,8 +23,13 @@ class UberdogRepository(AstronInternalRepository):
     def handleConnected(self):
         AstronInternalRepository.handleConnected(self)
         self.securityKey.enable()
+        self.createBackdoors()
         self.generateRoot()
         self.generateGlobals()
+
+    def createBackdoors(self):
+        self.accountBackDoor = AccountBackdoor('127.0.0.1', 6000)
+        self.accountBackDoor.startServer()
 
     def generateRoot(self):
         self.rootObject = DistributedObjectAI(self)
