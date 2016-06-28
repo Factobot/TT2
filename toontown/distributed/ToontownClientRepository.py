@@ -188,6 +188,8 @@ class ToontownClientRepository(ClientRepositoryBase, FSM):
         dclass.receiveUpdateBroadcastRequiredOwner(localAvatar, di)
         localAvatar.announceGenerate()
         localAvatar.postGenerateMessage()
+        localAvatar.startSmooth()
+        localAvatar.startPosHprBroadcast()
         self.doId2do[avId] = localAvatar
         self.forceTransition("Play")
         
@@ -263,14 +265,11 @@ class ToontownClientRepository(ClientRepositoryBase, FSM):
         
         if other:
             self.doGenerate(parentId, zoneId, classId, doId, di)
+            return
 
         dclass = self.dclassesByNumber[classId]  
         dclass.startGenerate()
-        try:
-            distObj = self.generateWithRequiredFields(dclass, doId, di, parentId, zoneId)
-        except:
-            distObj = None
-        
+        distObj = self.generateWithRequiredFields(dclass, doId, di, parentId, zoneId)
         dclass.stopGenerate()
 
     def handleGenerateWithRequiredOtherOwner(self, di):
