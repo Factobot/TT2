@@ -14,7 +14,6 @@ class DistributedToon(Toon, DistributedSmoothNode, DistributedAvatar):
 
     def generate(self):
         DistributedSmoothNode.generate(self)
-        self.startSmooth()
 
     def announceGenerate(self):
         DistributedSmoothNode.announceGenerate(self)
@@ -43,9 +42,5 @@ class DistributedToon(Toon, DistributedSmoothNode, DistributedAvatar):
     def b_setAnimState(self, animState):
         self.setAnimState(animState)
         self.d_setAnimState(animState)
-
-    def startSmooth(self):
-        DistributedSmoothNode.startSmooth(self)
-        DistributedSmoothNode.startPosHprBroadcast(self)
 
         
