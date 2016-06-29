@@ -22,7 +22,7 @@ requestTypes = [
     'request-login',
     'request-login_resp',
     'request-create',
-    'request-termination'
+    'request-invalid'
 ]
 
 class RequestHandler(BaseRequestHandler):
@@ -42,8 +42,8 @@ class RequestHandler(BaseRequestHandler):
         except:
             self.notify.warning('Recieved an invalid requestType!')
             response = {
-                "type":"response-invalid", "result":"invalid-request", "reason":"The request type provided was invalid, or your structure is invalid.")
-            }            
+                "type":"response-invalid", "result":"invalid-request", "reason":"The request type provided was invalid, or your structure is invalid."
+            }
             self.sendResponse(json.dumps(response))
             return
 
@@ -52,9 +52,6 @@ class RequestHandler(BaseRequestHandler):
         elif requestTypes == requestTypes[2]:
             # TODO: handle account creation...
             self.requestCreate()
-        elif requestType == requestTypes[3]:
-            # TODO: handle auth server banning the associated account
-
 
     def requestLogin(self, username):
         with open('db-storage.json', 'rb') as storage:
