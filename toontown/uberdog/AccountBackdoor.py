@@ -34,11 +34,13 @@ class RequestHandler(BaseRequestHandler):
 
 
     def handle(self):
-        data = self.request.recv(BUFFERSIZE)
+        data = str(self.request.recv(BUFFERSIZE))
         if len(data) == 0:
             return
+        
+        print(data)
 
-        jdata = json.loads(data, object_hook=self.encodeDataASCII)
+        jdata = json.loads(data)
 
         try:
             request = jdata['request']
@@ -54,13 +56,13 @@ class RequestHandler(BaseRequestHandler):
             return
 
         if requestType == requestTypes[0]:
-            self.requestLogin(requestType, request[1], request[2])
+            self.requestLogin(request[1], request[2])
         elif requestTypes == requestTypes[1]:
             # TODO: handle account creation...
             self.requestCreate()
 
     def requestLogin(self, username, password):
-        with open('db-storage', 'rb') as storage:
+        with open('db-storage.json', 'rb') as storage:
             jdata = json.load(storage)
             accounts = jdata['Accounts']
             # We're done close the storage file.
