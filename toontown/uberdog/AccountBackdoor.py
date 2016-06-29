@@ -28,12 +28,16 @@ class RequestHandler(BaseRequestHandler):
     notify.setInfo(True)
     notify.setWarning(True)
 
+    def encodeDataASCII(self, data):
+        encoded = lambda: x: x.encode('ascii')
+        return dict(map(encoded, pair) for pair in data.items())
+
     def handle(self):
         data = self.request.recv(BUFFERSIZE)
         if len(data) == 0:
             return
 
-        jdata = json.loads(data)
+        jdata = json.loads(data, object_hook=self.encodeDataASCII)
 
         try:
             request = jdata['request']
@@ -82,7 +86,7 @@ class RequestHandler(BaseRequestHandler):
         if len(response) == 0:
             return
 
-        self.request.send(response)
+        self.request.send(response, object_hook=self.encodeDataASCII)
 
 class AccountBackdoor(TCPServer):
     TCPServer.request_queue_size = QUEUESIZE
