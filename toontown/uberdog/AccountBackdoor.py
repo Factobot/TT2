@@ -33,8 +33,6 @@ class RequestHandler(BaseRequestHandler):
         if len(data) == 0:
             return
         
-        print(data)
-
         jdata = json.loads(data)
 
         try:
