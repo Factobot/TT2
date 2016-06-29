@@ -76,6 +76,7 @@ class RequestHandler(BaseRequestHandler):
         }
 
         self.sendResponse(json.dumps(response))
+        return
 
     def requestCreate(self):
         return NotImplemented
