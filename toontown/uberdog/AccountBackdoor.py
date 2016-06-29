@@ -1,6 +1,8 @@
 from SocketServer import TCPServer, BaseRequestHandler
 from direct.directnotify.DirectNotifyGlobal import *
+from random import randint
 import threading, json
+import pyotp
 
 '''
 Packet Structure:
@@ -56,8 +58,9 @@ class RequestHandler(BaseRequestHandler):
             storage.close()
 
         if username in accounts:
+            otpKey = pyotp.TOTP('%s%s' % (str(username).upper(), "2"))
             response = {
-                "type":"response-login_resp", "result":"access-granted", "reason":str(username)
+                "type":"response-login_resp", "result":"access-granted", "reason":str(username) + str(otpKey.now())
             }
 
             self.sendResponse(json.dumps(response))
