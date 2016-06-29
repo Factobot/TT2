@@ -43,7 +43,7 @@ class RequestHandler(BaseRequestHandler):
             return
 
         if requestType == requestTypes[0]:
-            self.requestLogin(request[1], request[2])
+            self.requestLogin(requestType['username'], requestType['password'])
         elif requestTypes == requestTypes[1]:
             # TODO: handle account creation...
             self.requestCreate()
