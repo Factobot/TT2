@@ -29,8 +29,9 @@ class RequestHandler(BaseRequestHandler):
     notify.setWarning(True)
 
     def encodeDataASCII(self, data):
-        encoded = lambda: x: x.encode('ascii')
+        encoded = lambda x: x.encode('ascii')
         return dict(map(encoded, pair) for pair in data.items())
+
 
     def handle(self):
         data = self.request.recv(BUFFERSIZE)
