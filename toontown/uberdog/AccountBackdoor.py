@@ -14,6 +14,8 @@ Packet Structure:
 '''
 
 BUFFERSIZE = 1024
+QUEUESIZE = 10000
+ALLOWREUSE = True
 
 requestTypes = [
     'request-login',
@@ -83,6 +85,8 @@ class RequestHandler(BaseRequestHandler):
         self.request.send(response)
 
 class AccountBackdoor(TCPServer):
+    TCPServer.request_queue_size = QUEUESIZE
+    TCPServer.allow_reuse_address = ALLOWREUSE
     notify = directNotify.newCategory("AccountBackdoor")
     notify.setInfo(True)
 
