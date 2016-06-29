@@ -36,16 +36,10 @@ class RequestHandler(BaseRequestHandler):
         jdata = json.loads(data)
 
         try:
-            request = jdata['request']
+            requestType = jdata['type']
         except:
-            self.notify.warning('Recieved an invalid request!')
-            # Invalid header recieved.
-            return
-
-        requestType = request[0]
-        if requestType not in requestTypes:
-            self.notify.warning('Recieved an invalid requestType with request: %s!' % str(request))
-            # Invalid request type.
+            self.notify.warning('Recieved an invalid requestType!')
+            # Invalid requestType recieved!
             return
 
         if requestType == requestTypes[0]:
@@ -63,14 +57,14 @@ class RequestHandler(BaseRequestHandler):
 
         if username in accounts:
             response = {
-                'response': ['response-login_resp', 'access-granted', 'Success, logging you in!']
+                "type":"response-login_resp", "result":"access-granted", "reason": "Login sucess!"
             }
 
             self.sendResponse(json.dumps(response))
             return
 
         response = {
-            'response': ['response-login_resp', 'access-denied', 'No accounts with that credentials were found in the database, perhapse you mispelled your password or username.']
+            "type":"response-login_resp", "result":"access-denied", "reason": "No accounts with that credentials were found in the database, perhapse you mispelled your password or username."
         }
 
         self.sendResponse(json.dumps(response))
