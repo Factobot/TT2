@@ -22,7 +22,8 @@ requestTypes = [
     'request-login',
     'request-login_resp',
     'request-create',
-    'request-invalid'
+    'request-invalid',
+    'request-heartbeat'
 ]
 
 class RequestHandler(BaseRequestHandler):
@@ -49,9 +50,15 @@ class RequestHandler(BaseRequestHandler):
 
         if requestType == requestTypes[0]:
             self.requestLogin(jdata['username'])
-        elif requestTypes == requestTypes[2]:
+        elif requestType == requestTypes[2]:
             # TODO: handle account creation...
             self.requestCreate()
+        elif requestType == requestTypes[4]:
+            response = {
+                "type":"response-heartbeat", "result":"server-online", "reason":"Pong!"
+            }
+            self.sendResponse(json.dumps(response))
+            return
 
     def requestLogin(self, username):
         with open('db-storage.json', 'rb') as storage:
