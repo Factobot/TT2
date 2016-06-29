@@ -57,7 +57,7 @@ class RequestHandler(BaseRequestHandler):
 
         if username in accounts:
             response = {
-                "type":"response-login_resp", "result":"access-granted", "reason": "Login sucess!", str(username)
+                "type":"response-login_resp", "result":"access-granted", "reason":str(username)
             }
 
             self.sendResponse(json.dumps(response))
