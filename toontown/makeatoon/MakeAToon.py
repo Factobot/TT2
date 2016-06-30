@@ -171,7 +171,8 @@ class MakeAToon(FSM):
         dna = ToonDNA()
         dna.newToonRandom(gender=gender)
         self.toon.setDNA(dna)
-        self.toon.useLOD('1000')
+        self.lod = '1000'
+        self.toon.useLOD(self.lod)
         self.toon.stopLookAroundNow()
         self.toon.stopBlink()
         
@@ -208,8 +209,8 @@ class MakeAToon(FSM):
         self.spaceGui.vt__altBuffer.setActive(0)
         self.toon.reparentTo(render)
         self.toon.setPos(self.table.getPos())
-        self.originalToonScale = self.toon.getScale()
         self.toon.setPosHprScale(-4.65, 6.21, 4.13, -120, 0.00, 0.00, 2, 2, 0.02)
+        self.originalToonScale = self.toon.getScale()
         self.toon.hide()
         
     def __unsquishToon(self):
