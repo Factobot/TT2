@@ -32,23 +32,45 @@ class Nametag(NodePath, InteractiveObject):
         self.pointArrow.setScale(0.5)
         self.pointArrow.setColor(self.properties["arrowColor"])
         self.reparentTo(self.parent)
-        self.setBillboardPointEye()
         self.stash()
+        
+    def __makeBillboard(self):
+        self.setEffect(BillboardEffect.make(
+                Vec3(0,0,1),
+                True,
+                False,
+                1.0,
+                base.camera,
+                Point3(0,0,0)))
+
+    def __clearBillboad(self):
+        self.clearEffect(BillboardEffect)
+        
+    def unload(self):
+        InteractiveObject.disable(self)
+        if self.cellData:
+            self.availableScreenCell(*self.cellData)
+            self.cellData = None
+        self.nametag2d.reparentTo(hidden)
+        self.nametag2d.removeNode()
+        self.removeNode()
         
     def updateScreenNametag(self):
         if self.avatar == base.localAvatar:
             return
         if not self.name:
             return
+        if self.avatar.isEmpty() or not self.avatar:
+            return
         loc = self.avatar.getPos(base.localAvatar)
         rot = base.localAvatar.getQuat(base.camera)
         cSpace = rot.xform(loc)
         radians = math.atan2(cSpace[0], cSpace[1])
-        degrees = radians/math.pi*180
+        degrees = radians / math.pi * 180
         d2 = degrees
         if d2 < 0: d2 *= -1
         if d2 >= 70:
-            if not self.cellData:
+            if not self.cellData and self.enabled:
                 cell = self.getScreenCell()
                 if not cell:
                     return
@@ -64,6 +86,7 @@ class Nametag(NodePath, InteractiveObject):
                 self.cellData = None
         
     def setName(self, name):
+        self.__clearBillboad()
         self.name = name
         self.tagFrameText.node().setText(name)
         width = self.tagFrameText.node().getWidth() * 0.3
@@ -73,6 +96,7 @@ class Nametag(NodePath, InteractiveObject):
         self.tagFrame.setScale(width + 0.3, 1, height + 0.05)
         self.tagFrameText.setZ(0)
         self.__genNametag2d()
+        self.__makeBillboard()
         InteractiveObject.enable(self)
         self.unstash()
         

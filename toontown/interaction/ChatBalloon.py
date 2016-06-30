@@ -22,25 +22,31 @@ class ChatBalloon(NodePath):
         self.chat = None
         self.properties = properties
         
-    def load(self, isThought = 0, is2d = 0):
-        if isThought:
-            self.balloon = loader.loadModel('phase_3/models/props/chatbox_thought_cutout')
-        elif is2d:
-            self.balloon = loader.loadModel('phase_3/models/props/chatbox_noarrow')
-        else:
-            self.balloon = loader.loadModel('phase_3/models/props/chatbox')
+    def load(self):
+        self.balloonThought = loader.loadModel('phase_3/models/props/chatbox_thought_cutout')
+        self.balloon2d = loader.loadModel('phase_3/models/props/chatbox_noarrow')
+        self.balloon = loader.loadModel('phase_3/models/props/chatbox')
         self.balloon.reparentTo(self)
+        self.balloonThought.reparentTo(self)
         self.balloon.hide()
+        self.balloonThought.hide()
         self.textNode = self.attachNewNode(TextNode('text'))
         self.textNode.node().setFont(self.properties['font'])
         self.textNode.node().setWordwrap(self.WORDWRAP)
         self.reparentTo(self.nametag)
         
-    def setChat(self, chat):
+    def unload(self):
+        self.removeNode()
+        
+    def setChat(self, chat, thought, is2d):
         if isinstance(chat, type(u'')):
             self.textNode.node().setWtext(chat)
         else:
             self.textNode.node().setText(chat)
+        if thought:
+            balloon = self.balloonThought
+        elif is2d:
+            balloon = self.balloon2d
         balloon = self.balloon
         top = balloon.find('**/top')
         middle = balloon.find('**/middle')
