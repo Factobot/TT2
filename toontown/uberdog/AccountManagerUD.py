@@ -179,6 +179,12 @@ class AccountManagerUD(DistributedObjectGlobalUD):
             if not keyMatch:
                 self.killConnection(sender, "Invalid authentication key!")
                 return
+
+        if self.air.adminServiceEnabled:
+            allowed = self.air.adminServiceUD.canLogin()
+            if not allowed:
+                self.killConnection(sender, "Server is currently down for mainternance!")
+                return
             
         self.connection2operation[sender] = AccountOperation(self, sender, token)
         self.connection2operation[sender].request("Start")

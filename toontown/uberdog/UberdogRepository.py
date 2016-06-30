@@ -4,11 +4,13 @@ from direct.distributed.PyDatagram import *
 from toontown.distributed import GameGlobals
 from toontown.uberdog.SecurityKeyUD import SecurityKeyUD
 from toontown.uberdog.Account2Auth import Account2Auth
+from toontown.uberdog.AdminServiceUD import AdminServiceUD
 
 class UberdogRepository(AstronInternalRepository):
     GameGlobalsId = GameGlobals.GameGlobalsId
     dbId = 4003
     securityKeyEnabled = 0
+    adminServiceEnabled = 0
     
     def __init__(self, dcFileNames, baseChannel, serverId):
         AstronInternalRepository.__init__(self, baseChannel, serverId, dcFileNames, dcSuffix='UD')
@@ -23,10 +25,15 @@ class UberdogRepository(AstronInternalRepository):
     def handleConnected(self):
         AstronInternalRepository.handleConnected(self)
         self.securityKey.enable()
+        self.createAdminCaC()
         self.createBackdoors()
         self.generateRoot()
         self.generateGlobals()
 
+    def createAdminCaC(self):
+        self.AdminServiceUD = AdminServiceUD('127.0.0.1', 6200)
+        self.AdminServiceUD.startServer()
+    
     def createBackdoors(self):
         self.Account2Auth = Account2Auth('127.0.0.1', 6000)
         self.Account2Auth.startServer()
