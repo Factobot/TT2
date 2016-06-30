@@ -38,6 +38,9 @@ class InteractiveObjectManager(DirectObject):
     def add(self, obj):
         self.objectMap.append(obj)
         
+    def remove(self, obj):
+        del self.objectMap[self.objectMap.index(obj)]
+        
     def __updateObjectsTask(self, task):
         for obj in self.objectMap:
             obj.update()

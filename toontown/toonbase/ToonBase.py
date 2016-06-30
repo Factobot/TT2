@@ -7,6 +7,9 @@ from toontown.toonbase import ToontownGlobals
 from toontown.interaction.InteractiveObjectManager import InteractiveObjectManager
 import time, sys
 
+MaxPhaseRegular = 13
+HalfPhases = ["phase_3.5", "phase_5.5"]
+MaxStage = 4
 class ToonBase(ShowBase, AudioManager):
     
     def __init__(self, *args, **kwArgs):
@@ -15,9 +18,23 @@ class ToonBase(ShowBase, AudioManager):
         self.interactiveObjectMgr = InteractiveObjectManager()
         self.transitions.IrisModelName = 'phase_3/models/misc/iris'
         self.transitions.FadeModelName = 'phase_3/models/misc/fade'
-        
+        self.__mountMultifiles()
         self.loader = ToontownLoader(self)
         self.accept('f1', self.takeScreenShot)
+        
+    def __mountMultifiles(self):
+        MountList = []
+        path = config.GetString("mount-path", "")
+        if path != "":
+            for i in range(3, MaxPhaseRegular+1):
+                MountList.append(path + "/phase_%d.mf" %i)
+            for x in HalfPhases:
+                MountList.append(path + "/%s.mf" %x)
+            for i in range(3, MaxStage+1):
+                MountList.append(path + "/stage_%d.mf" %i)
+            vfs = VirtualFileSystem.getGlobalPtr()
+            for m in MountList:
+                vfs.mount(Filename(m), ".", VirtualFileSystem.MFReadOnly)
     
     def openMainWindow(self, *args, **kwArgs):
         ShowBase.openMainWindow(self, *args, **kwArgs)

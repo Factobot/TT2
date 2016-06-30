@@ -558,6 +558,7 @@ class Toon(Avatar, ToonHead):
 
             del self.__holeActors
             self.soundTeleport = None
+            Avatar.delete(self)
             ToonHead.delete(self)
 
         return
