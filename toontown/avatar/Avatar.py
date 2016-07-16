@@ -23,10 +23,11 @@ class Avatar:
             self.nametagJoint.setZ(self.nametagJoint.getZ() - TypeToDiff[self.style.head[1:]])
         self.nametag = Nametag.Nametag(self, self.nametagJoint)
         self.nametag.load()
-        self.chat = ChatBalloon.ChatBalloon(self, self.nametag)
-        self.chat.load()
+        #self.chat = ChatBalloon.ChatBalloon(self, self.nametag)
+        #self.chat.load()
         
     def setChat(self, chat, isThought = 0):
+        return
         if isThought:
             self.chat.setChat(chat, 1)
         else:
