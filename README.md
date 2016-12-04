@@ -1,6 +1,8 @@
 Toontown 2.0 Repository
 
-Requirements to run the server!
+Requirements to run the server
+
+We thank you for enjoying TT2 while it lasted!
 
 ## 1.
 
